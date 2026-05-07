@@ -191,3 +191,16 @@ test("css avoids responsive overflow and focus clipping regressions", () => {
     /\.hero-content\s*\{[^}]*width:\s*min\(760px,\s*calc\(100%\s*-\s*36px\)\)[^}]*margin-left:/s
   );
 });
+
+test("timeline implements pinned horizontal behavior, drag, and hidden scrollbar", () => {
+  const js = file("src/timeline.js");
+  const css = file("src/styles.css");
+  assert.match(js, /setupTimeline/);
+  assert.match(js, /pointerdown/);
+  assert.match(js, /pointermove/);
+  assert.match(js, /prefers-reduced-motion:\s*reduce/);
+  assert.match(js, /requestAnimationFrame/);
+  assert.match(css, /scrollbar-width:\s*none/);
+  assert.match(css, /::-webkit-scrollbar/);
+  assert.match(css, /\.timeline-progress/);
+});

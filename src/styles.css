@@ -425,6 +425,7 @@ blockquote {
 }
 
 .timeline-section {
+  min-height: 260vh;
   padding: clamp(62px, 9vw, 118px) 0;
 }
 
@@ -433,45 +434,53 @@ blockquote {
 }
 
 .timeline-pin {
-  width: min(var(--container), calc(100% - clamp(36px, 10vw, 128px)));
-  margin: 0 auto;
+  position: sticky;
+  top: 92px;
+  overflow: hidden;
+  padding: 28px 0 42px;
 }
 
 .timeline-viewport {
+  width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 10px 0 22px;
+  cursor: grab;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
+  touch-action: pan-x;
+  user-select: none;
 }
 
 .timeline-viewport::-webkit-scrollbar {
   display: none;
 }
 
+.timeline-viewport.is-dragging {
+  cursor: grabbing;
+}
+
 .timeline-track {
   position: relative;
-  display: grid;
-  grid-auto-columns: minmax(280px, 36vw);
-  grid-auto-flow: column;
-  gap: 18px;
+  display: flex;
+  gap: clamp(18px, 3vw, 42px);
   width: max-content;
   min-width: 100%;
+  padding: 52px clamp(18px, 6vw, 84px) 72px;
 }
 
 .timeline-track::before {
   content: "";
   position: absolute;
   top: 28px;
-  left: 0;
-  right: 0;
+  left: clamp(18px, 6vw, 84px);
+  right: clamp(18px, 6vw, 84px);
   height: 2px;
   background: linear-gradient(90deg, var(--hino-red), var(--border-strong));
 }
 
 .milestone-card {
   position: relative;
+  flex: 0 0 min(360px, 82vw);
   scroll-snap-align: start;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
@@ -519,7 +528,9 @@ blockquote {
 }
 
 .timeline-progress {
+  width: min(var(--container), calc(100% - 36px));
   height: 4px;
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 999px;
   background: var(--border);
@@ -527,10 +538,12 @@ blockquote {
 
 .timeline-progress span {
   display: block;
-  width: 22%;
+  width: 100%;
   height: 100%;
   border-radius: inherit;
   background: var(--hino-red);
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 .card-grid {
@@ -710,12 +723,22 @@ blockquote {
     min-height: 620px;
   }
 
-  .timeline-pin {
-    width: calc(100% - 36px);
+  .timeline-section {
+    min-height: auto;
   }
 
-  .timeline-track {
-    grid-auto-columns: minmax(276px, 72vw);
+  .timeline-pin {
+    position: relative;
+    top: auto;
+    overflow: visible;
+  }
+
+  .timeline-viewport {
+    scroll-snap-type: x mandatory;
+  }
+
+  .milestone-card {
+    scroll-snap-align: center;
   }
 }
 
@@ -829,12 +852,22 @@ blockquote {
     width: 100%;
   }
 
-  .timeline-track {
-    grid-auto-columns: minmax(256px, 84vw);
+  .milestone-card {
+    flex-basis: min(340px, 84vw);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .timeline-section {
+    min-height: auto;
+  }
+
+  .timeline-pin {
+    position: relative;
+    top: auto;
+    overflow: visible;
+  }
+
   *,
   *::before,
   *::after {
