@@ -26,13 +26,11 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  overflow-x: hidden;
   font-family: "Be Vietnam Pro", Arial, "Helvetica Neue", sans-serif;
   color: var(--ink);
   background: var(--surface);
@@ -152,7 +150,8 @@ iframe {
   grid-column: 3;
   display: inline-flex;
   justify-self: end;
-  overflow: hidden;
+  gap: 2px;
+  padding: 2px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: #ffffff;
@@ -171,7 +170,8 @@ iframe {
 }
 
 .language-toggle button {
-  padding: 0 13px;
+  border-radius: 999px;
+  padding: 0 12px;
   transition: background 180ms ease, color 180ms ease;
 }
 
@@ -236,8 +236,8 @@ iframe {
 .hero-content {
   position: relative;
   z-index: 1;
-  width: min(760px, calc(100% - 36px));
-  margin-left: clamp(18px, 7vw, 92px);
+  width: min(760px, calc(100% - clamp(36px, 14vw, 184px)));
+  margin-inline: clamp(18px, 7vw, 92px);
   padding: 56px 0;
 }
 
@@ -426,7 +426,6 @@ blockquote {
 
 .timeline-section {
   padding: clamp(62px, 9vw, 118px) 0;
-  overflow: hidden;
 }
 
 .timeline-section .section-heading {

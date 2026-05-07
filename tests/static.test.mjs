@@ -177,3 +177,17 @@ test("css includes approved UI/UX Pro Max quality gates", () => {
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /:focus-visible/);
 });
+
+test("css avoids responsive overflow and focus clipping regressions", () => {
+  const css = file("src/styles.css");
+  assert.match(css, /@media \(max-width:\s*900px\)/);
+  assert.doesNotMatch(css, /letter-spacing:\s*-/);
+  assert.doesNotMatch(css, /html\s*\{[^}]*overflow-x\s*:/s);
+  assert.doesNotMatch(css, /body\s*\{[^}]*overflow-x\s*:/s);
+  assert.doesNotMatch(css, /\.language-toggle\s*\{[^}]*overflow:\s*hidden/s);
+  assert.doesNotMatch(css, /\.timeline-section\s*\{[^}]*overflow:\s*hidden/s);
+  assert.doesNotMatch(
+    css,
+    /\.hero-content\s*\{[^}]*width:\s*min\(760px,\s*calc\(100%\s*-\s*36px\)\)[^}]*margin-left:/s
+  );
+});
