@@ -78,7 +78,7 @@ function renderNav(data, activeLang) {
     <header class="site-nav" id="site-nav">
       <a class="brand-lockup" href="${safeUrl(data.nav.logoHref)}" aria-label="${escapeHtml(data.nav.homeLabel)}">
         <img class="hino-logo" src="src/assets/hino-logo.svg" width="52" height="52" alt="Hino">
-        <span class="a30-mark">30</span>
+        <img class="a30-mark" src="src/assets/a30-mark.svg" width="90" height="37" alt="A30">
       </a>
       <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -108,11 +108,14 @@ function renderCarouselButton(direction, label) {
   `;
 }
 
-function renderHero(section, activeLang) {
+function renderHero(section, activeLang, assets) {
   const labels = heroActionLabels[activeLang] || heroActionLabels.vi;
+  const hasHeroBannerUrl = hasSafeUrl(assets.heroBannerUrl, { allowHash: false });
+  const heroBannerUrl = safeUrl(assets.heroBannerUrl, "", { allowHash: false });
+  const heroStyle = hasHeroBannerUrl ? ` style="--hero-banner-image: url('${heroBannerUrl}');"` : "";
 
   return `
-    <section class="hero-banner" id="hero" aria-labelledby="hero-title">
+    <section class="hero-banner" id="hero" aria-labelledby="hero-title"${heroStyle}>
       <div class="hero-scrim"></div>
       <div class="hero-content">
         <p class="eyebrow">${escapeHtml(section.eyebrow)}</p>
@@ -349,7 +352,7 @@ export function renderPage(data, activeLang) {
   const sections = data.sections;
   return `
     ${renderNav(data, activeLang)}
-    ${renderHero(sections.hero, activeLang)}
+    ${renderHero(sections.hero, activeLang, data.assets)}
     ${renderAppreciation(sections.appreciation)}
     ${renderVideo(sections.video, data.assets)}
     ${renderMilestones(sections.milestones)}

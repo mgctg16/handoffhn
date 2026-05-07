@@ -107,14 +107,10 @@ iframe {
 }
 
 .a30-mark {
-  border-left: 1px solid var(--hino-red);
-  padding-left: 14px;
-  color: var(--hino-red);
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
-  font-size: 28px;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: 0;
+  display: block;
+  width: 90px;
+  height: 37px;
+  object-fit: contain;
 }
 
 .nav-links {
@@ -187,6 +183,7 @@ iframe {
   min-height: clamp(470px, 62vw, 720px);
   overflow: hidden;
   background:
+    var(--hero-banner-image, linear-gradient(135deg, #f8fafc 0%, #eceff4 42%, #cfd5dd 100%)) center / cover no-repeat,
     linear-gradient(90deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.84) 42%, rgba(255, 255, 255, 0.32) 100%),
     linear-gradient(135deg, #f8fafc 0%, #eceff4 42%, #cfd5dd 100%);
 }
@@ -1158,8 +1155,8 @@ blockquote {
   }
 
   .a30-mark {
-    padding-left: 10px;
-    font-size: 24px;
+    width: 76px;
+    height: 31px;
   }
 
   .language-toggle {

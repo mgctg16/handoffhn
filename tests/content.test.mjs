@@ -18,7 +18,7 @@ const requiredLanguageKeys = ["assets", "lang", "languageLabel", "nav", "section
 const expectedAssets = {
   videoUrl: "",
   companyProfileUrl: "",
-  heroBannerUrl: ""
+  heroBannerUrl: "src/assets/hero-banner.png"
 };
 
 const expectedViNav = {
@@ -351,7 +351,7 @@ test("contact fields are exact and bilingual", () => {
   assert.deepEqual(content.en.sections.contact, expectedEnSections.contact);
 });
 
-test("missing assets are explicitly represented", () => {
+test("assets are explicitly represented", () => {
   assert.deepEqual(content.vi.assets, expectedAssets);
   assert.deepEqual(content.en.assets, expectedAssets);
 });
