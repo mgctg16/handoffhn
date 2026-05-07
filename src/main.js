@@ -1,16 +1,20 @@
 import { content } from "./content.js";
 import { renderPage } from "./render.js";
+import { setupContestCarousel } from "./carousel.js";
 import { setupTimeline } from "./timeline.js";
 
 const app = document.querySelector("#app");
 let activeLang = "vi";
 let cleanupTimeline = () => {};
+let cleanupContestCarousel = () => {};
 
 function render() {
   document.documentElement.lang = activeLang;
   cleanupTimeline();
+  cleanupContestCarousel();
   app.innerHTML = renderPage(content[activeLang], activeLang);
   cleanupTimeline = setupTimeline(document.querySelector(".timeline-section"));
+  cleanupContestCarousel = setupContestCarousel(document.querySelector(".contest-section"));
 
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.addEventListener("click", () => {

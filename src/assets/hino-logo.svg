@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-labelledby="title desc">
+  <title id="title">Hino logo</title>
+  <desc id="desc">Hino red square logo with silver emblem and wordmark.</desc>
+  <defs>
+    <linearGradient id="silver" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7f7f7"/>
+      <stop offset="24%" stop-color="#9a9a9a"/>
+      <stop offset="48%" stop-color="#ffffff"/>
+      <stop offset="74%" stop-color="#6f6f6f"/>
+      <stop offset="100%" stop-color="#e5e5e5"/>
+    </linearGradient>
+    <linearGradient id="shadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#222222" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="360" fill="#e50000"/>
+  <g transform="translate(31 36)">
+    <path d="M55 84C88 45 130 24 178 21c-15 26-31 53-46 79h95c-15-26-31-53-46-79 48 3 90 24 123 63-25 7-49 17-72 31H128c-23-14-48-24-73-31Z" fill="url(#silver)"/>
+    <path d="M55 151c25-7 50-17 73-31h104c23 14 47 24 72 31-33 39-75 60-123 63 15-26 31-53 46-79h-95c15 26 31 53 46 79-48-3-90-24-123-63Z" fill="url(#silver)"/>
+    <path d="M55 84C88 45 130 24 178 21c-11 18-21 36-32 54-29 3-55 12-78 28l-13-19Zm249 67c-33 39-75 60-123 63 11-18 21-36 32-54 29-3 55-12 78-28l13 19Z" fill="url(#shadow)"/>
+  </g>
+  <text x="180" y="297" text-anchor="middle" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="65" font-weight="900" letter-spacing="8" fill="url(#silver)">HINO</text>
+</svg>

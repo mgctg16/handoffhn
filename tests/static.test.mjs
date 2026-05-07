@@ -13,10 +13,12 @@ test("project shell files exist", () => {
   [
     "index.html",
     "src/content.js",
+    "src/carousel.js",
     "src/render.js",
     "src/timeline.js",
     "src/main.js",
-    "src/styles.css"
+    "src/styles.css",
+    "src/assets/hino-logo.svg"
   ].forEach((path) => {
     assert.equal(existsSync(join(root, path)), true, `${path} should exist`);
   });
@@ -31,8 +33,9 @@ test("index loads app modules and uses a mobile-safe viewport", () => {
 });
 
 test("app modules expose the scaffold contract", async () => {
-  const [{ sectionOrder, content }, { renderPage }, { setupTimeline }] = await Promise.all([
+  const [{ sectionOrder, content }, { setupContestCarousel }, { renderPage }, { setupTimeline }] = await Promise.all([
     import("../src/content.js"),
+    import("../src/carousel.js"),
     import("../src/render.js"),
     import("../src/timeline.js")
   ]);
@@ -50,6 +53,8 @@ test("app modules expose the scaffold contract", async () => {
   assert.deepEqual(Object.keys(content).sort(), ["en", "vi"]);
   assert.equal(typeof renderPage, "function");
   assert.equal(typeof renderPage(), "string");
+  assert.equal(typeof setupContestCarousel, "function");
+  assert.equal(typeof setupContestCarousel(), "function");
   assert.equal(typeof setupTimeline, "function");
   assert.equal(typeof setupTimeline(), "function");
 });
@@ -91,6 +96,45 @@ test("rendered pages expose heading ids, language state, and menu label", async 
   assert.match(vi, /data-lang="en" aria-pressed="false"/);
   assert.match(en, /data-lang="vi" aria-pressed="false"/);
   assert.match(en, /data-lang="en" aria-pressed="true"/);
+});
+
+test("rendered page uses requested Hino logo and copied footer", async () => {
+  const [{ content }, { renderPage }] = await Promise.all([
+    import("../src/content.js"),
+    import("../src/render.js")
+  ]);
+
+  const html = renderPage(content.vi, "vi");
+
+  assert.match(html, /src="src\/assets\/hino-logo\.svg"/);
+  assert.match(html, /alt="Hino"/);
+  assert.match(html, /id="contact"/);
+  assert.match(html, /SẢN PHẨM/);
+  assert.match(html, /Series 300/);
+  assert.match(html, /DỊCH VỤ VÀ PHỤ TÙNG/);
+  assert.match(html, /FOLLOW US/);
+  assert.match(html, /CÔNG TY LD TNHH HINO MOTORS VIỆT NAM/);
+  assert.match(html, /Hotline:<\/strong> <b>18009280<\/b>/);
+  assert.match(html, /Quy định &amp; Điều khoản/);
+  assert.match(html, /Lên đầu trang/);
+});
+
+test("rendered contest is a draggable five-card carousel with placeholders", async () => {
+  const [{ content }, { renderPage }] = await Promise.all([
+    import("../src/content.js"),
+    import("../src/render.js")
+  ]);
+
+  const html = renderPage(content.vi, "vi");
+  const contestCards = html.match(/<article class="contest-card/g) || [];
+  const placeholders = html.match(/class="contest-card is-placeholder"/g) || [];
+
+  assert.equal(contestCards.length, 5);
+  assert.equal(placeholders.length, 3);
+  assert.match(html, /class="contest-carousel" tabindex="0"/);
+  assert.match(html, /data-carousel-prev/);
+  assert.match(html, /data-carousel-next/);
+  assert.match(html, /&lt;Hino cung cấp&gt;/);
 });
 
 test("rendered output escapes text and filters unsafe urls", async () => {
@@ -203,6 +247,20 @@ test("timeline implements pinned horizontal behavior, drag, and hidden scrollbar
   assert.match(css, /scrollbar-width:\s*none/);
   assert.match(css, /::-webkit-scrollbar/);
   assert.match(css, /\.timeline-progress/);
+});
+
+test("contest carousel implements button controls, drag, and hidden scrollbar", () => {
+  const js = file("src/carousel.js");
+  const css = file("src/styles.css");
+  assert.match(js, /setupContestCarousel/);
+  assert.match(js, /pointerdown/);
+  assert.match(js, /scrollBy/);
+  assert.match(js, /requestAnimationFrame/);
+  assert.match(css, /\.contest-carousel/);
+  assert.match(css, /\.contest-track/);
+  assert.match(css, /scroll-snap-type:\s*x proximity/);
+  assert.match(css, /\.contest-carousel::-webkit-scrollbar/);
+  assert.match(css, /scrollbar-width:\s*none/);
 });
 
 test("rendering protects missing video and profile assets", () => {

@@ -17,6 +17,7 @@ const heroActionLabels = {
     video: "Video"
   }
 };
+const contestCardCount = 5;
 
 function safeUrl(value, fallback = "#", options = {}) {
   const { allowHash = true } = options;
@@ -76,7 +77,7 @@ function renderNav(data, activeLang) {
   return `
     <header class="site-nav" id="site-nav">
       <a class="brand-lockup" href="${safeUrl(data.nav.logoHref)}" aria-label="${escapeHtml(data.nav.homeLabel)}">
-        <span class="hino-logo">HINO</span>
+        <img class="hino-logo" src="src/assets/hino-logo.svg" width="52" height="52" alt="Hino">
         <span class="a30-mark">30</span>
       </a>
       <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
@@ -90,6 +91,20 @@ function renderNav(data, activeLang) {
         <button type="button" data-lang="en" aria-pressed="${activeLang === "en"}">EN</button>
       </div>
     </header>
+  `;
+}
+
+function renderCarouselButton(direction, label) {
+  const path = direction === "prev"
+    ? "M15 18l-6-6 6-6M9 12h12"
+    : "M9 6l6 6-6 6m-6-6h12";
+
+  return `
+    <button class="carousel-button" type="button" data-carousel-${direction} aria-label="${escapeHtml(label)}">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+        <path d="${path}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
   `;
 }
 
@@ -209,6 +224,48 @@ function renderCards(section, type) {
   `;
 }
 
+function renderContest(section) {
+  const items = [...section.items];
+
+  while (items.length < contestCardCount) {
+    items.push({
+      name: "<Hino cung cấp>",
+      quote: "<Hino cung cấp>",
+      isPlaceholder: true
+    });
+  }
+
+  const cards = items
+    .slice(0, contestCardCount)
+    .map((item, index) => `
+      <article class="contest-card${item.isPlaceholder ? " is-placeholder" : ""}" aria-label="A30 contest card ${index + 1}">
+        <div class="contest-card-top">
+          <span class="contest-index">${String(index + 1).padStart(2, "0")}</span>
+          <span class="contest-label">A30</span>
+        </div>
+        ${mediaPlaceholder("Contest image placeholder", "contest-image")}
+        <blockquote class="contest-quote">${escapeHtml(item.quote)}</blockquote>
+        <p class="contest-name">${escapeHtml(item.name)}</p>
+      </article>
+    `)
+    .join("");
+
+  return `
+    <section class="card-section contest-section" id="contest" aria-labelledby="contest-title">
+      <div class="contest-heading-row">
+        ${sectionHeading(section, "contest-title")}
+        <div class="contest-controls" aria-label="Contest carousel controls">
+          ${renderCarouselButton("prev", "Previous contest card")}
+          ${renderCarouselButton("next", "Next contest card")}
+        </div>
+      </div>
+      <div class="contest-carousel" tabindex="0" aria-label="${escapeHtml(section.heading)}">
+        <div class="contest-track">${cards}</div>
+      </div>
+    </section>
+  `;
+}
+
 function renderProfile(section, assets) {
   const hasProfileUrl = hasSafeUrl(assets.companyProfileUrl);
   const href = safeUrl(assets.companyProfileUrl);
@@ -224,17 +281,63 @@ function renderProfile(section, assets) {
   `;
 }
 
-function renderContact(section) {
+function renderFooter() {
   return `
-    <section class="contact-section" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">${escapeHtml(section.heading)}</h2>
-      <address>
-        <strong>${escapeHtml(section.company)}</strong>
-        <span>${escapeHtml(section.address)}</span>
-        <span>${escapeHtml(section.tax)}</span>
-        <span>${escapeHtml(section.hotline)}</span>
-      </address>
-    </section>
+    <footer class="site-footer" id="contact" aria-labelledby="footer-contact-title">
+      <div class="footer-main">
+        <section class="footer-group" aria-labelledby="footer-products-title">
+          <h2 id="footer-products-title">SẢN PHẨM</h2>
+          <ul class="footer-list">
+            <li>Series 300</li>
+            <li>Series 500</li>
+            <li>Series 700</li>
+          </ul>
+        </section>
+        <section class="footer-group" aria-labelledby="footer-about-title">
+          <h2 id="footer-about-title">VỀ CHÚNG TÔI</h2>
+          <ul class="footer-list">
+            <li>Hino Motors Việt Nam</li>
+            <li>Chặng đường</li>
+            <li>Tuyển dụng</li>
+          </ul>
+        </section>
+        <section class="footer-group" aria-labelledby="footer-service-title">
+          <h2 id="footer-service-title">DỊCH VỤ VÀ PHỤ TÙNG</h2>
+          <ul class="footer-list">
+            <li>Dịch vụ sau bán hàng</li>
+            <li>Chính sách bảo hành</li>
+            <li>Phụ tùng chính hãng</li>
+          </ul>
+        </section>
+        <section class="footer-group footer-follow" aria-labelledby="footer-follow-title">
+          <h2 id="footer-follow-title">FOLLOW US</h2>
+          <div class="footer-social-list">
+            <span class="footer-social-item"><span class="social-icon social-facebook" aria-hidden="true">f</span>Facebook</span>
+            <span class="footer-social-item"><span class="social-icon social-youtube" aria-hidden="true"></span>Youtube</span>
+          </div>
+        </section>
+        <section class="footer-contact" aria-labelledby="footer-contact-title">
+          <h2 id="footer-contact-title">LIÊN HỆ</h2>
+          <address>
+            <strong>CÔNG TY LD TNHH HINO MOTORS VIỆT NAM</strong>
+            <span>Ngõ 83 Đường Ngọc Hồi, Phường Yên Sở, Thành phố Hà Nội, Việt Nam</span>
+            <span>Mã số thuế: 0100114272</span>
+            <span><strong>Hotline:</strong> <b>18009280</b></span>
+          </address>
+        </section>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-inner">
+          <nav class="footer-policy" aria-label="Footer policy">
+            <span>Quy định &amp; Điều khoản</span>
+            <span>Chính sách bảo mật</span>
+            <span>Chính sách nhân quyền</span>
+          </nav>
+          <p>© 2017 Xe tải Hino. Bản quyền đã được bảo hộ.</p>
+          <a class="back-to-top" href="#hero">Lên đầu trang <span aria-hidden="true">^</span></a>
+        </div>
+      </div>
+    </footer>
   `;
 }
 
@@ -251,12 +354,8 @@ export function renderPage(data, activeLang) {
     ${renderVideo(sections.video, data.assets)}
     ${renderMilestones(sections.milestones)}
     ${renderCards(sections.news, "news")}
-    ${renderCards(sections.contest, "contest")}
+    ${renderContest(sections.contest)}
     ${renderProfile(sections.profile, data.assets)}
-    ${renderContact(sections.contact)}
-    <footer class="site-footer">
-      <p>© Hino Motors Vietnam</p>
-      <a href="https://hino.vn/">hino.vn</a>
-    </footer>
+    ${renderFooter()}
   `;
 }
