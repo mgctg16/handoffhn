@@ -14,7 +14,12 @@ function render() {
 
   document.querySelectorAll("[data-lang]").forEach((button) => {
     button.addEventListener("click", () => {
-      activeLang = button.dataset.lang;
+      const nextLang = button.dataset.lang;
+      if (nextLang === activeLang || !content[nextLang]) {
+        return;
+      }
+
+      activeLang = nextLang;
       render();
       app.focus({ preventScroll: true });
     });

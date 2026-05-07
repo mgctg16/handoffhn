@@ -6,15 +6,55 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
+function safeUrl(value, fallback = "#", options = {}) {
+  const { allowHash = true } = options;
+  const url = String(value || "").trim();
+
+  if (!url) {
+    return escapeHtml(fallback);
+  }
+
+  if (url.startsWith("#")) {
+    return escapeHtml(allowHash ? url : fallback);
+  }
+
+  if (url.startsWith("/") && !url.startsWith("//")) {
+    return escapeHtml(url);
+  }
+
+  if (url.startsWith("./") || url.startsWith("../") || url.startsWith("?")) {
+    return escapeHtml(url);
+  }
+
+  if (!/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(url) && !url.startsWith("//")) {
+    return escapeHtml(url);
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return escapeHtml(url);
+    }
+  } catch {
+    return escapeHtml(fallback);
+  }
+
+  return escapeHtml(fallback);
+}
+
+function hasSafeUrl(value, options = {}) {
+  return safeUrl(value, "", options) !== "";
+}
+
 function mediaPlaceholder(label, className = "") {
   return `<div class="media-placeholder ${className}" role="img" aria-label="${escapeHtml(label)}">${escapeHtml(label)}</div>`;
 }
 
-function sectionHeading(section, kicker = "") {
+function sectionHeading(section, headingId, kicker = "") {
   return `
     <div class="section-heading">
       ${kicker ? `<p class="eyebrow">${escapeHtml(kicker)}</p>` : ""}
-      <h2>${escapeHtml(section.heading)}</h2>
+      <h2 id="${escapeHtml(headingId)}">${escapeHtml(section.heading)}</h2>
       ${section.subtext ? `<p>${escapeHtml(section.subtext)}</p>` : ""}
     </div>
   `;
@@ -22,16 +62,16 @@ function sectionHeading(section, kicker = "") {
 
 function renderNav(data, activeLang) {
   const links = data.nav.links
-    .map(([id, label]) => `<a href="#${id}">${escapeHtml(label)}</a>`)
+    .map(([id, label]) => `<a href="${safeUrl(`#${id}`)}">${escapeHtml(label)}</a>`)
     .join("");
 
   return `
     <header class="site-nav" id="site-nav">
-      <a class="brand-lockup" href="${data.nav.logoHref}" aria-label="${escapeHtml(data.nav.homeLabel)}">
+      <a class="brand-lockup" href="${safeUrl(data.nav.logoHref)}" aria-label="${escapeHtml(data.nav.homeLabel)}">
         <span class="hino-logo">HINO</span>
         <span class="a30-mark">30</span>
       </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+      <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
       </button>
       <nav class="nav-links" id="nav-links" aria-label="Primary navigation">
@@ -76,16 +116,20 @@ function renderAppreciation(section) {
 }
 
 function renderVideo(section, assets) {
-  const videoBody = assets.videoUrl
-    ? `<iframe src="${escapeHtml(assets.videoUrl)}" title="${escapeHtml(section.heading)}" allowfullscreen></iframe>`
+  const hasVideoUrl = hasSafeUrl(assets.videoUrl, { allowHash: false });
+  const videoUrl = safeUrl(assets.videoUrl, "#", { allowHash: false });
+  const videoBody = hasVideoUrl
+    ? `<iframe src="${videoUrl}" title="${escapeHtml(section.heading)}" allowfullscreen></iframe>`
     : mediaPlaceholder("Video placeholder - awaiting Hino YouTube link", "video-placeholder");
-  const disabled = assets.videoUrl ? "" : " aria-disabled=\"true\" tabindex=\"-1\"";
+  const cta = hasVideoUrl
+    ? `<a class="button primary" href="${videoUrl}">${escapeHtml(section.cta)}</a>`
+    : `<span class="button primary is-disabled" aria-disabled="true">${escapeHtml(section.cta)}</span>`;
 
   return `
     <section class="content-band" id="video" aria-labelledby="video-title">
-      ${sectionHeading(section)}
+      ${sectionHeading(section, "video-title")}
       <div class="video-frame">${videoBody}</div>
-      <a class="button primary ${assets.videoUrl ? "" : "is-disabled"}" href="${assets.videoUrl || "#video"}"${disabled}>${escapeHtml(section.cta)}</a>
+      ${cta}
     </section>
   `;
 }
@@ -104,7 +148,7 @@ function renderMilestones(section) {
 
   return `
     <section class="timeline-section" id="milestones" aria-labelledby="milestones-title">
-      ${sectionHeading(section)}
+      ${sectionHeading(section, "milestones-title")}
       <div class="timeline-pin">
         <div class="timeline-viewport" tabindex="0" aria-label="${escapeHtml(section.heading)}">
           <div class="timeline-track">${items}</div>
@@ -132,7 +176,7 @@ function renderCards(section, type) {
   if (type === "news") {
     return `
       <section class="card-section" id="news" aria-labelledby="news-title">
-        ${sectionHeading(section)}
+        ${sectionHeading(section, "news-title")}
         <div class="card-grid">${items}</div>
       </section>
     `;
@@ -140,19 +184,23 @@ function renderCards(section, type) {
 
   return `
     <section class="card-section" id="contest" aria-labelledby="contest-title">
-      ${sectionHeading(section)}
+      ${sectionHeading(section, "contest-title")}
       <div class="card-grid">${items}</div>
     </section>
   `;
 }
 
 function renderProfile(section, assets) {
-  const href = assets.companyProfileUrl || "#profile";
-  const disabled = assets.companyProfileUrl ? "" : " aria-disabled=\"true\" tabindex=\"-1\"";
+  const hasProfileUrl = hasSafeUrl(assets.companyProfileUrl);
+  const href = safeUrl(assets.companyProfileUrl);
+  const cta = hasProfileUrl
+    ? `<a class="button primary" href="${href}">${escapeHtml(section.cta)}</a>`
+    : `<span class="button primary is-disabled" aria-disabled="true">${escapeHtml(section.cta)}</span>`;
+
   return `
     <section class="profile-cta" id="profile" aria-labelledby="profile-title">
-      ${sectionHeading(section)}
-      <a class="button primary ${assets.companyProfileUrl ? "" : "is-disabled"}" href="${href}"${disabled}>${escapeHtml(section.cta)}</a>
+      ${sectionHeading(section, "profile-title")}
+      ${cta}
     </section>
   `;
 }
