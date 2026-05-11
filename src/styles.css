@@ -16,6 +16,8 @@
   --radius: 8px;
   --container: 1180px;
   --nav-height: 76px;
+  --pattern-line: rgba(15, 23, 42, 0.035);
+  --pattern-dot: rgba(201, 0, 0, 0.08);
 }
 
 *,
@@ -31,7 +33,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  font-family: "Be Vietnam Pro", Arial, "Helvetica Neue", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: var(--ink);
   background: var(--surface);
   font-size: 16px;
@@ -99,11 +101,9 @@ iframe {
 
 .hino-logo {
   display: block;
-  width: 52px;
-  height: 52px;
-  border-radius: 3px;
-  object-fit: cover;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
+  width: auto;
+  height: 48px;
+  object-fit: contain;
 }
 
 .a30-mark {
@@ -120,7 +120,7 @@ iframe {
   align-items: center;
   gap: clamp(14px, 2.2vw, 28px);
   min-width: 0;
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -157,7 +157,7 @@ iframe {
   background: #ffffff;
   color: var(--ink);
   cursor: pointer;
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 800;
 }
 
@@ -187,6 +187,10 @@ iframe {
     linear-gradient(135deg, #f8fafc 0%, #eceff4 42%, #cfd5dd 100%);
 }
 
+.hero-banner.has-image {
+  min-height: clamp(430px, 50.8vw, 720px);
+}
+
 .hero-image {
   position: absolute;
   inset: 0;
@@ -205,7 +209,7 @@ iframe {
   justify-content: flex-end;
   padding-right: clamp(28px, 8vw, 110px);
   color: rgba(15, 23, 42, 0.12);
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(7rem, 22vw, 18rem);
   font-weight: 800;
   line-height: 0.85;
@@ -241,8 +245,8 @@ iframe {
 
 .hero-banner.has-image .hero-scrim {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.6) 38%, rgba(255, 255, 255, 0.22) 62%, rgba(255, 255, 255, 0.06) 100%),
-    linear-gradient(180deg, rgba(10, 18, 30, 0.03), rgba(10, 18, 30, 0.1));
+    linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 48%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(180deg, rgba(10, 18, 30, 0.02), rgba(10, 18, 30, 0.06));
 }
 
 .hero-content {
@@ -253,10 +257,28 @@ iframe {
   padding: 56px 0;
 }
 
+.hero-banner.has-image .eyebrow,
+.hero-banner.has-image h1,
+.hero-banner.has-image .hero-copy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hero-banner.has-image .hero-actions {
+  display: none;
+}
+
 .eyebrow {
   margin: 0 0 16px;
   color: var(--hino-red);
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.78rem;
   font-weight: 800;
   line-height: 1.35;
@@ -267,15 +289,15 @@ iframe {
 h1,
 h2,
 h3 {
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: 0;
 }
 
 h1 {
   max-width: 760px;
   margin: 0;
-  font-size: clamp(2.45rem, 5vw, 5rem);
-  line-height: 1.04;
+  font-size: clamp(2rem, 4.1vw, 4.1rem);
+  line-height: 1.08;
 }
 
 .hero-copy {
@@ -301,7 +323,7 @@ h1 {
   padding: 0 18px;
   border: 1px solid var(--hino-red);
   border-radius: 4px;
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 800;
   text-align: center;
   text-decoration: none;
@@ -348,7 +370,7 @@ h1 {
     linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0)),
     repeating-linear-gradient(135deg, var(--soft-2), var(--soft-2) 14px, #f4f6f9 14px, #f4f6f9 28px);
   color: var(--muted);
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 800;
   line-height: 1.45;
   text-align: center;
@@ -370,14 +392,14 @@ h1 {
 .split-copy h2,
 .section-heading h2 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3.6rem);
-  line-height: 1.12;
+  font-size: clamp(1.72rem, 3.15vw, 3rem);
+  line-height: 1.16;
 }
 
 blockquote {
   margin: 28px 0;
   color: var(--text);
-  font-size: clamp(1.35rem, 2.4vw, 2.3rem);
+  font-size: clamp(1.18rem, 2vw, 1.95rem);
   line-height: 1.28;
 }
 
@@ -402,6 +424,41 @@ blockquote {
 .timeline-section,
 .profile-cta {
   background: var(--soft);
+}
+
+.section-pattern {
+  position: relative;
+  isolation: isolate;
+}
+
+.section-pattern::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18px 18px, var(--pattern-dot) 1px, transparent 1.5px),
+    repeating-linear-gradient(135deg, transparent 0 18px, var(--pattern-line) 18px 19px, transparent 19px 36px);
+  background-size: 36px 36px, 100% 100%;
+  opacity: 0.72;
+}
+
+.section-pattern::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: clamp(18px, 5vw, 64px);
+  right: clamp(18px, 5vw, 64px);
+  z-index: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--hino-red), rgba(201, 0, 0, 0));
+  opacity: 0.38;
+}
+
+.section-pattern > * {
+  position: relative;
+  z-index: 1;
 }
 
 .section-heading {
@@ -520,8 +577,8 @@ blockquote {
   margin: 0;
   padding: 0 22px;
   color: var(--hino-red);
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
-  font-size: 1.7rem;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.5rem;
   line-height: 1;
   font-weight: 800;
 }
@@ -720,14 +777,14 @@ blockquote {
 
 .contest-index,
 .contest-label {
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 800;
   line-height: 1;
 }
 
 .contest-index {
   color: var(--hino-red);
-  font-size: 1.85rem;
+  font-size: 1.58rem;
 }
 
 .contest-label {
@@ -752,7 +809,7 @@ blockquote {
 .contest-quote {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(1.05rem, 1.4vw, 1.28rem);
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
   line-height: 1.55;
 }
 
@@ -778,7 +835,7 @@ blockquote {
 
 .card-copy h3 {
   margin: 0 0 14px;
-  font-size: 1.18rem;
+  font-size: 1.06rem;
   line-height: 1.35;
 }
 
@@ -795,7 +852,7 @@ blockquote {
   margin-top: auto;
   padding-top: 12px;
   color: var(--hino-red);
-  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 800;
   text-decoration: none;
 }
@@ -868,7 +925,7 @@ blockquote {
   width: 36px;
   height: 36px;
   color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.55rem;
   font-weight: 800;
   line-height: 1;
@@ -1169,8 +1226,8 @@ blockquote {
   }
 
   .hino-logo {
-    width: 48px;
-    height: 48px;
+    width: auto;
+    height: 44px;
   }
 
   .a30-mark {

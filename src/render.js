@@ -136,7 +136,7 @@ function renderHero(section, activeLang, assets) {
 
 function renderAppreciation(section) {
   return `
-    <section class="split-section" id="appreciation" aria-labelledby="appreciation-title">
+    <section class="split-section section-pattern" id="appreciation" aria-labelledby="appreciation-title">
       ${mediaPlaceholder("TGĐ photo placeholder", "portrait-placeholder")}
       <div class="split-copy">
         <h2 id="appreciation-title">${escapeHtml(section.heading)}</h2>
@@ -158,7 +158,7 @@ function renderVideo(section, assets) {
     : `<span class="button primary is-disabled" aria-disabled="true">${escapeHtml(section.cta)}</span>`;
 
   return `
-    <section class="content-band" id="video" aria-labelledby="video-title">
+    <section class="content-band section-pattern" id="video" aria-labelledby="video-title">
       ${sectionHeading(section, "video-title")}
       <div class="video-frame">${videoBody}</div>
       ${cta}
@@ -179,7 +179,7 @@ function renderMilestones(section) {
     .join("");
 
   return `
-    <section class="timeline-section" id="milestones" aria-labelledby="milestones-title">
+    <section class="timeline-section section-pattern" id="milestones" aria-labelledby="milestones-title">
       ${sectionHeading(section, "milestones-title")}
       <div class="timeline-pin">
         <div class="timeline-viewport" tabindex="0" aria-label="${escapeHtml(section.heading)}">
@@ -216,7 +216,7 @@ function renderCards(section, type) {
 
   if (type === "news") {
     return `
-      <section class="card-section" id="news" aria-labelledby="news-title">
+      <section class="card-section section-pattern" id="news" aria-labelledby="news-title">
         ${sectionHeading(section, "news-title")}
         <div class="card-grid">${items}</div>
       </section>
@@ -258,7 +258,7 @@ function renderContest(section) {
     .join("");
 
   return `
-    <section class="card-section contest-section" id="contest" aria-labelledby="contest-title">
+    <section class="card-section contest-section section-pattern" id="contest" aria-labelledby="contest-title">
       <div class="contest-heading-row">
         ${sectionHeading(section, "contest-title")}
         <div class="contest-controls" aria-label="Contest carousel controls">
@@ -281,7 +281,7 @@ function renderProfile(section, assets) {
     : `<span class="button primary is-disabled" aria-disabled="true">${escapeHtml(section.cta)}</span>`;
 
   return `
-    <section class="profile-cta" id="profile" aria-labelledby="profile-title">
+    <section class="profile-cta section-pattern" id="profile" aria-labelledby="profile-title">
       ${sectionHeading(section, "profile-title")}
       ${cta}
     </section>

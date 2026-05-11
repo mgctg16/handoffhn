@@ -18,7 +18,9 @@ test("project shell files exist", () => {
     "src/timeline.js",
     "src/main.js",
     "src/styles.css",
-    "src/assets/hino-logo.svg"
+    "src/assets/hino-logo.svg",
+    "src/assets/a30-mark.svg",
+    "src/assets/hero-banner.png"
   ].forEach((path) => {
     assert.equal(existsSync(join(root, path)), true, `${path} should exist`);
   });
@@ -107,6 +109,8 @@ test("rendered page uses requested Hino logo and copied footer", async () => {
   const html = renderPage(content.vi, "vi");
 
   assert.match(html, /src="src\/assets\/hino-logo\.svg"/);
+  assert.match(html, /src="src\/assets\/a30-mark\.svg"/);
+  assert.match(html, /src="src\/assets\/hero-banner\.png"/);
   assert.match(html, /alt="Hino"/);
   assert.match(html, /id="contact"/);
   assert.match(html, /SẢN PHẨM/);
@@ -213,8 +217,10 @@ test("rendered hero actions and language toggle are localized and grouped", asyn
 test("css includes approved UI/UX Pro Max quality gates", () => {
   const css = file("src/styles.css");
   assert.match(css, /--hino-red:\s*#c90000/);
-  assert.match(css, /Plus Jakarta Sans/);
-  assert.match(css, /Be Vietnam Pro/);
+  assert.match(css, /Helvetica Neue/);
+  assert.match(css, /section-pattern/);
+  assert.doesNotMatch(css, /\.hino-logo\s*\{[^}]*border-radius/s);
+  assert.doesNotMatch(css, /\.hino-logo\s*\{[^}]*box-shadow/s);
   assert.match(css, /\.hero-banner/);
   assert.match(css, /min-height:\s*44px/);
   assert.match(css, /@media \(max-width:\s*768px\)/);
