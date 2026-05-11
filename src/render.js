@@ -56,7 +56,13 @@ function hasSafeUrl(value, options = {}) {
 }
 
 function mediaPlaceholder(label, className = "") {
-  return `<div class="media-placeholder ${className}" role="img" aria-label="${escapeHtml(label)}">${escapeHtml(label)}</div>`;
+  const seed = encodeURIComponent(label).replace(/%/g, '');
+  const imgUrl = `https://picsum.photos/seed/${seed}/800/600`;
+  return `
+    <div class="media-placeholder ${className}" style="padding: 0; background: none; overflow: hidden;" role="img" aria-label="${escapeHtml(label)}">
+      <img src="${imgUrl}" alt="${escapeHtml(label)}" style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy" />
+    </div>
+  `;
 }
 
 function sectionHeading(section, headingId, kicker = "") {
@@ -77,8 +83,9 @@ function renderNav(data, activeLang) {
   return `
     <header class="site-nav" id="site-nav">
       <a class="brand-lockup" href="${safeUrl(data.nav.logoHref)}" aria-label="${escapeHtml(data.nav.homeLabel)}">
-        <img class="hino-logo" src="src/assets/hino-logo.svg" width="52" height="52" alt="Hino">
-        <img class="a30-mark" src="src/assets/a30-mark.svg" width="90" height="37" alt="A30">
+        <img class="hino-logo" src="src/assets/image.png" width="52" height="52" alt="Hino">
+        <span class="logo-divider"></span>
+        <img class="a30-mark" src="src/Asset 2de.svg" width="90" height="37" alt="A30">
       </a>
       <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -112,16 +119,15 @@ function renderHero(section, activeLang, assets) {
   const labels = heroActionLabels[activeLang] || heroActionLabels.vi;
   const hasHeroBannerUrl = hasSafeUrl(assets.heroBannerUrl, { allowHash: false });
   const heroBannerUrl = safeUrl(assets.heroBannerUrl, "", { allowHash: false });
-  const heroClass = hasHeroBannerUrl ? "hero-banner has-image" : "hero-banner";
+  
   const heroImage = hasHeroBannerUrl
-    ? `<img class="hero-image" src="${heroBannerUrl}" alt="Hino 30 years hero banner">`
+    ? `<section class="hero-banner-only"><img class="hero-image-full" src="${heroBannerUrl}" alt="Hino 30 years hero banner"></section>`
     : "";
 
   return `
-    <section class="${heroClass}" id="hero" aria-labelledby="hero-title">
-      ${heroImage}
-      <div class="hero-scrim"></div>
-      <div class="hero-content">
+    ${heroImage}
+    <section class="hero-text-section" id="hero" aria-labelledby="hero-title">
+      <div class="hero-content-centered">
         <p class="eyebrow">${escapeHtml(section.eyebrow)}</p>
         <h1 id="hero-title">${escapeHtml(section.heading)}</h1>
         <p class="hero-copy">${escapeHtml(section.subtext)}</p>
@@ -168,14 +174,22 @@ function renderVideo(section, assets) {
 
 function renderMilestones(section) {
   const items = section.items
-    .map((item, index) => `
-      <article class="milestone-card" tabindex="0" data-index="${index}">
+    .map((item, index) => {
+      const position = index % 2 === 0 ? "top" : "bottom";
+      return `
+      <div class="milestone-column" data-position="${position}" data-index="${index}">
+        <div class="milestone-card" tabindex="0">
+          ${mediaPlaceholder(item.imageAlt, "milestone-image")}
+          <div class="milestone-card-body">
+            <p class="milestone-year">${escapeHtml(item.year)}</p>
+            <p class="milestone-text">${escapeHtml(item.text)}</p>
+          </div>
+        </div>
+        <div class="milestone-connector" aria-hidden="true"></div>
         <div class="milestone-dot" aria-hidden="true"></div>
-        <p class="milestone-year">${escapeHtml(item.year)}</p>
-        <p class="milestone-text">${escapeHtml(item.text)}</p>
-        ${mediaPlaceholder(item.imageAlt, "milestone-image")}
-      </article>
-    `)
+      </div>
+    `;
+    })
     .join("");
 
   return `

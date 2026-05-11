@@ -16,8 +16,6 @@
   --radius: 8px;
   --container: 1180px;
   --nav-height: 76px;
-  --pattern-line: rgba(15, 23, 42, 0.035);
-  --pattern-dot: rgba(201, 0, 0, 0.08);
 }
 
 *,
@@ -35,10 +33,37 @@ body {
   min-width: 320px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: var(--ink);
-  background: var(--surface);
+  background-color: transparent; /* Changed so ::before background shows */
   font-size: 16px;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -10px; /* Slight bleed to avoid layout paint artifacts */
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--surface);
+  background-image:
+    radial-gradient(ellipse 1000px 700px at 0% 10%, rgba(201, 0, 0, 0.05), transparent),
+    radial-gradient(ellipse 1000px 700px at 100% 40%, rgba(15, 23, 42, 0.03), transparent),
+    linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 100% 1200px, 100% 1200px, 56px 56px, 56px 56px;
+  background-position: 50% 0, 50% 0, 0 0, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  animation: grid-flow 18s linear infinite;
+}
+
+@keyframes grid-flow {
+  0% {
+    background-position: 50% 0, 50% 0, 0 0, 0 0;
+  }
+  100% {
+    background-position: 50% 0, 50% 0, -56px -56px, -56px -56px;
+  }
 }
 
 body::selection {
@@ -70,9 +95,7 @@ iframe {
 }
 
 #app {
-  background:
-    linear-gradient(180deg, rgba(248, 250, 252, 0.72), rgba(255, 255, 255, 0) 260px),
-    var(--surface);
+  /* Background applied globally to body::before */
 }
 
 .site-nav {
@@ -101,9 +124,19 @@ iframe {
 
 .hino-logo {
   display: block;
-  width: auto;
-  height: 48px;
-  object-fit: contain;
+  width: 52px;
+  height: 52px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
+}
+
+.logo-divider {
+  display: block;
+  width: 2px;
+  height: 36px;
+  background-color: var(--hino-red);
+  border-radius: 1px;
 }
 
 .a30-mark {
@@ -111,6 +144,7 @@ iframe {
   width: 90px;
   height: 37px;
   object-fit: contain;
+  margin-left: -12px;
 }
 
 .nav-links {
@@ -120,7 +154,7 @@ iframe {
   align-items: center;
   gap: clamp(14px, 2.2vw, 28px);
   min-width: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -157,7 +191,7 @@ iframe {
   background: #ffffff;
   color: var(--ink);
   cursor: pointer;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
 }
 
@@ -176,141 +210,80 @@ iframe {
   display: none;
 }
 
-.hero-banner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  min-height: clamp(470px, 62vw, 720px);
-  overflow: hidden;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.84) 42%, rgba(255, 255, 255, 0.32) 100%),
-    linear-gradient(135deg, #f8fafc 0%, #eceff4 42%, #cfd5dd 100%);
-}
-
-.hero-banner.has-image {
-  min-height: clamp(430px, 50.8vw, 720px);
-}
-
-.hero-image {
-  position: absolute;
-  inset: 0;
+.hero-banner-only {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.hero-banner::before {
-  content: "A30";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: clamp(28px, 8vw, 110px);
-  color: rgba(15, 23, 42, 0.12);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(7rem, 22vw, 18rem);
-  font-weight: 800;
-  line-height: 0.85;
-  letter-spacing: 0;
-  background:
-    linear-gradient(122deg, transparent 0 43%, rgba(201, 0, 0, 0.2) 43% 51%, transparent 51%),
-    radial-gradient(circle at 82% 42%, rgba(201, 0, 0, 0.15), transparent 28%);
-}
-
-.hero-banner::after {
-  content: "";
-  position: absolute;
-  right: clamp(24px, 6vw, 84px);
-  bottom: clamp(26px, 6vw, 72px);
-  width: min(420px, 42vw);
-  height: 8px;
-  background: var(--hino-red);
-  opacity: 0.92;
-}
-
-.hero-scrim {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.2)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(15, 23, 42, 0.08));
-}
-
-.hero-banner.has-image::before,
-.hero-banner.has-image::after {
-  content: none;
-}
-
-.hero-banner.has-image .hero-scrim {
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 48%, rgba(255, 255, 255, 0) 100%),
-    linear-gradient(180deg, rgba(10, 18, 30, 0.02), rgba(10, 18, 30, 0.06));
-}
-
-.hero-content {
-  position: relative;
-  z-index: 1;
-  width: min(760px, calc(100% - clamp(36px, 14vw, 184px)));
-  margin-inline: clamp(18px, 7vw, 92px);
-  padding: 56px 0;
-}
-
-.hero-banner.has-image .eyebrow,
-.hero-banner.has-image h1,
-.hero-banner.has-image .hero-copy {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
+  display: block;
   overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
-.hero-banner.has-image .hero-actions {
-  display: none;
+.hero-image-full {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.8s cubic-bezier(0.2, 1, 0.4, 1), filter 0.8s ease;
+}
+
+.hero-banner-only:hover .hero-image-full {
+  transform: scale(1.015);
+  filter: brightness(0.8) contrast(1.05);
+}
+
+.hero-text-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(60px, 10vw, 100px) clamp(18px, 5vw, 64px);
+  background: var(--surface);
+  text-align: center;
+}
+
+.hero-content-centered {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .eyebrow {
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   color: var(--hino-red);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 0.78rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.82rem;
   font-weight: 800;
   line-height: 1.35;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
 }
 
 h1,
 h2,
 h3 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   letter-spacing: 0;
 }
 
 h1 {
   max-width: 760px;
   margin: 0;
-  font-size: clamp(2rem, 4.1vw, 4.1rem);
-  line-height: 1.08;
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
 }
 
 .hero-copy {
   max-width: 660px;
-  margin: 22px 0 0;
+  margin: 28px 0 0;
   color: var(--text);
-  font-size: clamp(1rem, 1.35vw, 1.15rem);
-  line-height: 1.7;
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  line-height: 1.75;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   margin-top: 30px;
 }
@@ -323,7 +296,7 @@ h1 {
   padding: 0 18px;
   border: 1px solid var(--hino-red);
   border-radius: 4px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
   text-align: center;
   text-decoration: none;
@@ -370,7 +343,7 @@ h1 {
     linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0)),
     repeating-linear-gradient(135deg, var(--soft-2), var(--soft-2) 14px, #f4f6f9 14px, #f4f6f9 28px);
   color: var(--muted);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
   line-height: 1.45;
   text-align: center;
@@ -392,14 +365,16 @@ h1 {
 .split-copy h2,
 .section-heading h2 {
   margin: 0;
-  font-size: clamp(1.72rem, 3.15vw, 3rem);
-  line-height: 1.16;
+  font-size: clamp(1.85rem, 3.6vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
 }
 
 blockquote {
   margin: 28px 0;
   color: var(--text);
-  font-size: clamp(1.18rem, 2vw, 1.95rem);
+  font-size: clamp(1.35rem, 2.4vw, 2.3rem);
   line-height: 1.28;
 }
 
@@ -426,51 +401,28 @@ blockquote {
   background: var(--soft);
 }
 
-.section-pattern {
-  position: relative;
-  isolation: isolate;
-}
-
-.section-pattern::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 18px 18px, var(--pattern-dot) 1px, transparent 1.5px),
-    repeating-linear-gradient(135deg, transparent 0 18px, var(--pattern-line) 18px 19px, transparent 19px 36px);
-  background-size: 36px 36px, 100% 100%;
-  opacity: 0.72;
-}
-
-.section-pattern::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: clamp(18px, 5vw, 64px);
-  right: clamp(18px, 5vw, 64px);
-  z-index: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--hino-red), rgba(201, 0, 0, 0));
-  opacity: 0.38;
-}
-
-.section-pattern > * {
-  position: relative;
-  z-index: 1;
-}
-
 .section-heading {
   max-width: 760px;
-  margin: 0 auto 34px;
+  margin: 0 auto 42px;
   text-align: center;
+}
+
+.section-heading h2::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin: 16px auto 0;
+  border-radius: 2px;
+  background: var(--hino-red);
 }
 
 .section-heading p {
   max-width: 680px;
-  margin: 18px auto 0;
+  margin: 20px auto 0;
   color: var(--text);
+  font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+  line-height: 1.7;
 }
 
 .video-frame {
@@ -527,57 +479,159 @@ blockquote {
   cursor: grabbing;
 }
 
+/* ── Zigzag timeline track ── */
 .timeline-track {
   position: relative;
   display: flex;
-  gap: clamp(18px, 3vw, 42px);
+  align-items: center;
+  gap: 0;
   width: max-content;
   min-width: 100%;
-  padding: 52px clamp(18px, 6vw, 84px) 72px;
+  height: 580px;
+  padding: 0 clamp(18px, 6vw, 84px);
 }
 
+/* Horizontal centre line */
 .timeline-track::before {
   content: "";
   position: absolute;
-  top: 28px;
+  top: 50%;
   left: clamp(18px, 6vw, 84px);
   right: clamp(18px, 6vw, 84px);
-  height: 2px;
-  background: linear-gradient(90deg, var(--hino-red), var(--border-strong));
+  height: 3px;
+  background: linear-gradient(90deg, var(--hino-red), var(--hino-red) 60%, var(--border-strong));
+  transform: translateY(-50%);
+  z-index: 1;
 }
 
-.milestone-card {
+/* ── Column wrapper for each milestone ── */
+.milestone-column {
   position: relative;
-  flex: 0 0 min(360px, 82vw);
-  scroll-snap-align: start;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 12px;
-  min-height: 360px;
-  padding: 0 0 18px;
+  flex: 0 0 min(320px, 78vw);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Dot on the timeline ── */
+.milestone-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 16px;
+  height: 16px;
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+  background: var(--hino-red);
+  box-shadow: 0 0 0 2px var(--hino-red), 0 0 12px rgba(201, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  transition: transform 260ms ease, box-shadow 260ms ease;
+}
+
+.milestone-column:hover .milestone-dot {
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 0 0 2px var(--hino-red), 0 0 22px rgba(201, 0, 0, 0.45);
+}
+
+/* ── Vertical connector line ── */
+.milestone-connector {
+  position: absolute;
+  left: 50%;
+  width: 2px;
+  background: var(--hino-red);
+  z-index: 2;
+  transform: translateX(-50%);
+  opacity: 0.5;
+  transition: opacity 260ms ease;
+}
+
+.milestone-column:hover .milestone-connector {
+  opacity: 1;
+}
+
+/* ── Card (image + text block) ── */
+.milestone-card {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: #ffffff;
   box-shadow: var(--shadow-soft);
+  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+  cursor: pointer;
 }
 
-.milestone-dot {
-  position: relative;
-  z-index: 1;
-  width: 18px;
-  height: 18px;
-  margin: 20px 0 0 22px;
-  border: 4px solid #ffffff;
-  border-radius: 999px;
-  background: var(--hino-red);
-  box-shadow: 0 0 0 1px var(--hino-red);
+.milestone-column:hover .milestone-card {
+  border-color: rgba(201, 0, 0, 0.3);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.13);
+  transform: translateY(-4px);
+}
+
+.milestone-column[data-position="bottom"]:hover .milestone-card {
+  transform: translateY(4px);
+}
+
+/* ── TOP position: card above the line ── */
+.milestone-column[data-position="top"] .milestone-card {
+  bottom: calc(50% + 28px);
+}
+
+.milestone-column[data-position="top"] .milestone-connector {
+  bottom: calc(50% + 8px);
+  height: 20px;
+}
+
+/* ── BOTTOM position: card below the line ── */
+.milestone-column[data-position="bottom"] .milestone-card {
+  top: calc(50% + 28px);
+}
+
+.milestone-column[data-position="bottom"] .milestone-connector {
+  top: calc(50% + 8px);
+  height: 20px;
+}
+
+/* For bottom cards, reorder so image goes below text */
+.milestone-column[data-position="bottom"] .milestone-card {
+  flex-direction: column-reverse;
+}
+
+/* ── Image placeholder ── */
+.milestone-image {
+  min-height: 110px;
+  border-radius: 0;
+  border-width: 0;
+  background:
+    linear-gradient(135deg, rgba(201, 0, 0, 0.08), rgba(255, 255, 255, 0)),
+    repeating-linear-gradient(135deg, var(--soft-2), var(--soft-2) 14px, #f4f6f9 14px, #f4f6f9 28px);
+}
+
+.milestone-column[data-position="top"] .milestone-image {
+  border-bottom: 1px solid var(--border);
+}
+
+.milestone-column[data-position="bottom"] .milestone-image {
+  border-top: 1px solid var(--border);
+}
+
+/* ── Card body ── */
+.milestone-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .milestone-year {
   margin: 0;
-  padding: 0 22px;
   color: var(--hino-red);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 1.5rem;
   line-height: 1;
   font-weight: 800;
@@ -585,20 +639,20 @@ blockquote {
 
 .milestone-text {
   margin: 0;
-  padding: 0 22px;
   color: var(--text);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.milestone-image {
-  min-height: 140px;
-  margin: 6px 18px 0;
-  border-radius: 6px;
-}
-
+/* ── Progress bar (unchanged) ── */
 .timeline-progress {
   width: min(var(--container), calc(100% - 36px));
   height: 4px;
-  margin: 0 auto;
+  margin: 18px auto 0;
   overflow: hidden;
   border-radius: 999px;
   background: var(--border);
@@ -652,6 +706,11 @@ blockquote {
   max-width: 780px;
   margin: 0;
   text-align: left;
+}
+
+.contest-heading-row .section-heading h2::after {
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .contest-heading-row .section-heading p {
@@ -777,14 +836,14 @@ blockquote {
 
 .contest-index,
 .contest-label {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
   line-height: 1;
 }
 
 .contest-index {
   color: var(--hino-red);
-  font-size: 1.58rem;
+  font-size: 1.85rem;
 }
 
 .contest-label {
@@ -809,7 +868,7 @@ blockquote {
 .contest-quote {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  font-size: clamp(1.05rem, 1.4vw, 1.28rem);
   line-height: 1.55;
 }
 
@@ -835,7 +894,8 @@ blockquote {
 
 .card-copy h3 {
   margin: 0 0 14px;
-  font-size: 1.06rem;
+  font-size: 1.28rem;
+  font-weight: 800;
   line-height: 1.35;
 }
 
@@ -852,7 +912,7 @@ blockquote {
   margin-top: auto;
   padding-top: 12px;
   color: var(--hino-red);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
   text-decoration: none;
 }
@@ -925,7 +985,7 @@ blockquote {
   width: 36px;
   height: 36px;
   color: #ffffff;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 1.55rem;
   font-weight: 800;
   line-height: 1;
@@ -1226,8 +1286,8 @@ blockquote {
   }
 
   .hino-logo {
-    width: auto;
-    height: 44px;
+    width: 48px;
+    height: 48px;
   }
 
   .a30-mark {

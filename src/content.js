@@ -66,7 +66,7 @@ export const content = {
     assets: {
       videoUrl: "",
       companyProfileUrl: "",
-      heroBannerUrl: "src/assets/hero-banner.png"
+      heroBannerUrl: "src/assets/HINO banner 1.jpg"
     },
     nav: {
       logoHref: "https://hino.vn/",
@@ -147,7 +147,7 @@ export const content = {
     assets: {
       videoUrl: "",
       companyProfileUrl: "",
-      heroBannerUrl: "src/assets/hero-banner.png"
+      heroBannerUrl: "src/assets/HINO banner 1.jpg"
     },
     nav: {
       logoHref: "https://hino.vn/",

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Critique - Hino A30 Landing Page</title>
+    <style>
+      :root {
+        --red: #c90000;
+        --ink: #101827;
+        --text: #405066;
+        --muted: #6b778c;
+        --line: #dde4ee;
+        --soft: #f6f8fb;
+        --surface: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(135deg, rgba(201, 0, 0, 0.045) 0 1px, transparent 1px 42px),
+          var(--soft);
+        line-height: 1.55;
+      }
+
+      main {
+        width: min(1120px, calc(100% - 36px));
+        margin: 0 auto;
+        padding: 44px 0 56px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 28px;
+        align-items: end;
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--red);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin-bottom: 12px;
+        font-size: clamp(2rem, 5vw, 4.2rem);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      header p {
+        max-width: 760px;
+        margin-bottom: 0;
+        color: var(--text);
+        font-size: 1.02rem;
+      }
+
+      .date {
+        justify-self: end;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+        gap: 28px;
+        margin: 32px 0;
+        align-items: center;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 20px 48px rgba(16, 24, 39, 0.08);
+      }
+
+      .radar {
+        padding: 28px;
+      }
+
+      .verdict {
+        padding: 28px;
+      }
+
+      .verdict strong {
+        color: var(--red);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        padding: 22px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .score {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 12px;
+        color: var(--red);
+        font-size: 2rem;
+        font-weight: 900;
+      }
+
+      .score span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      h2 {
+        margin-bottom: 18px;
+        font-size: 1.45rem;
+      }
+
+      h3 {
+        margin-bottom: 8px;
+        font-size: 1.05rem;
+      }
+
+      .card p {
+        color: var(--text);
+      }
+
+      .tag {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 8px;
+        background: #fff3f3;
+        color: var(--red);
+        font-size: 0.76rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--text);
+      }
+
+      li + li {
+        margin-top: 10px;
+      }
+
+      code {
+        padding: 1px 4px;
+        background: #eef2f7;
+        color: #253041;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+      }
+
+      svg {
+        width: 100%;
+        height: auto;
+      }
+
+      @media (max-width: 820px) {
+        header,
+        .summary,
+        .grid,
+        .actions {
+          grid-template-columns: 1fr;
+        }
+
+        .date {
+          justify-self: start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">OD Critique skill</p>
+          <h1>Hino A30 Landing Page Review</h1>
+          <p>Verdict: the latest pass fixes the high-risk brand asset and hero crop issues. The page is now credible and usable, but still needs stronger section-specific art direction below the hero to feel less template-like.</p>
+        </div>
+        <div class="date">11 May 2026</div>
+      </header>
+
+      <section class="summary" aria-labelledby="radar-title">
+        <div class="panel radar">
+          <h2 id="radar-title">Score Radar</h2>
+          <svg viewBox="0 0 420 360" role="img" aria-label="Radar chart showing scores: philosophy 7, hierarchy 7, detail 7, functionality 8, innovation 6">
+            <g transform="translate(210 178)">
+              <polygon points="0,-130 124,-40 77,105 -77,105 -124,-40" fill="none" stroke="#d7dee8"></polygon>
+              <polygon points="0,-104 99,-32 62,84 -62,84 -99,-32" fill="none" stroke="#e2e8f0"></polygon>
+              <polygon points="0,-78 74,-24 46,63 -46,63 -74,-24" fill="none" stroke="#e2e8f0"></polygon>
+              <polygon points="0,-52 50,-16 31,42 -31,42 -50,-16" fill="none" stroke="#e2e8f0"></polygon>
+              <polygon points="0,-26 25,-8 15,21 -15,21 -25,-8" fill="none" stroke="#e2e8f0"></polygon>
+              <line x1="0" y1="0" x2="0" y2="-130" stroke="#edf1f6"></line>
+              <line x1="0" y1="0" x2="124" y2="-40" stroke="#edf1f6"></line>
+              <line x1="0" y1="0" x2="77" y2="105" stroke="#edf1f6"></line>
+              <line x1="0" y1="0" x2="-77" y2="105" stroke="#edf1f6"></line>
+              <line x1="0" y1="0" x2="-124" y2="-40" stroke="#edf1f6"></line>
+              <polygon points="0,-91 87,-28 54,74 -54,74 -74,-24" fill="rgba(201,0,0,0.2)" stroke="#c90000" stroke-width="3"></polygon>
+              <circle cx="0" cy="-91" r="4" fill="#c90000"></circle>
+              <circle cx="87" cy="-28" r="4" fill="#c90000"></circle>
+              <circle cx="54" cy="74" r="4" fill="#c90000"></circle>
+              <circle cx="-54" cy="74" r="4" fill="#c90000"></circle>
+              <circle cx="-74" cy="-24" r="4" fill="#c90000"></circle>
+              <text x="0" y="-148" text-anchor="middle" font-size="13" font-weight="800">Philosophy</text>
+              <text x="145" y="-42" text-anchor="start" font-size="13" font-weight="800">Hierarchy</text>
+              <text x="86" y="132" text-anchor="middle" font-size="13" font-weight="800">Detail</text>
+              <text x="-86" y="132" text-anchor="middle" font-size="13" font-weight="800">Function</text>
+              <text x="-145" y="-42" text-anchor="end" font-size="13" font-weight="800">Innovation</text>
+            </g>
+          </svg>
+        </div>
+        <div class="panel verdict">
+          <h2>One-Line Read</h2>
+          <p><strong>Client-facing enough for another review round.</strong> The Hino and A30 logo sources are now correct, the hero uses the supplied banner without crop through `aspect-ratio: 2880 / 1206` and `object-fit: contain`, and the title sizing is less oversized. The remaining weakness is that some body modules still rely on placeholders and repeated patterning.</p>
+        </div>
+      </section>
+
+      <section class="grid" aria-label="Five critique dimensions">
+        <article class="card">
+          <div class="score">7 <span>/ 10</span></div>
+          <h3>Philosophy Consistency</h3>
+          <p>The design now stays in a stricter Hino register: original Hino and A30 assets sit side by side in `render.js:80-81`, the Helvetica stack remains consistent, and the red/neutral industrial palette is intact. The body pattern moves toward a technical-road language in `styles.css:443-457`, though placeholder blocks still weaken the premium direction.</p>
+          <span class="tag">Keep</span>
+        </article>
+        <article class="card">
+          <div class="score">7 <span>/ 10</span></div>
+          <h3>Visual Hierarchy</h3>
+          <p>The hero is now the clear first read because the supplied banner fills the section at its own ratio and the duplicate HTML copy stays visually hidden. Section titles are less shouty after the change to `clamp(1.65rem, 2.55vw, 2.58rem)` and `text-wrap: balance` in `styles.css:395-405`.</p>
+          <span class="tag">Keep</span>
+        </article>
+        <article class="card">
+          <div class="score">7 <span>/ 10</span></div>
+          <h3>Detail Execution</h3>
+          <p>The asset handling is more robust: the hero image declares `width="2880"` and `height="1206"` in `render.js:117`, uses a PNG file that Chromium renders correctly, and has a cache-busting URL in `content.js:69` and `content.js:150`. Header logo proportion is improved but should still be visually checked on the client's final device.</p>
+          <span class="tag">Quick win</span>
+        </article>
+        <article class="card">
+          <div class="score">8 <span>/ 10</span></div>
+          <h3>Functionality</h3>
+          <p>Core interaction quality is solid: language toggle, semantic sections, carousel drag, timeline drag, hidden scrollbars, focus states, and reduced-motion handling are protected by tests. The latest run passes 34 tests, including the locked source hashes for Hino, A30, and hero assets.</p>
+          <span class="tag">Keep</span>
+        </article>
+        <article class="card">
+          <div class="score">6 <span>/ 10</span></div>
+          <h3>Innovation</h3>
+          <p>The horizontal timeline and drag carousel give the page some motion character, but the page still feels corporate-safe below the hero. The new pattern is better than the previous basic dots, yet repeated placeholders keep the experience from feeling as polished as a high-end anniversary microsite.</p>
+          <span class="tag">Fix next</span>
+        </article>
+      </section>
+
+      <section class="actions" aria-label="Action lists">
+        <article class="card">
+          <h2>Keep</h2>
+          <ul>
+            <li>Keep the hero banner ratio locked with `aspect-ratio: 2880 / 1206` and `object-fit: contain`.</li>
+            <li>Keep Hino on the left and A30 on the right in the header lockup.</li>
+            <li>Keep the Helvetica Neue stack for Vietnamese punctuation support and brand fit.</li>
+            <li>Keep the horizontal timeline and manual drag behavior.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>Fix</h2>
+          <ul>
+            <li>Replace large placeholder media blocks once the client sends approved photos.</li>
+            <li>Use a section-specific pattern variant for timeline and contest so every band does not share the same texture.</li>
+            <li>Check final logo sizing against the client's approved lockup on production viewport widths.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>Quick Wins</h2>
+          <ul>
+            <li>Add one subtle red route-line accent near each section heading instead of relying only on the global pattern.</li>
+            <li>Reduce heading max width further on very long Vietnamese headings if future copy changes create a three-line block.</li>
+            <li>Use one real Hino truck/photo asset in the first placeholder to make the page feel less basic immediately.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
