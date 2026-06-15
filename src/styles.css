@@ -1559,31 +1559,21 @@ blockquote {
 }
 
 .news-arrow {
-  display: inline-grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgba(201, 0, 0, 0.22);
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--hino-red);
-  font-size: 2rem;
-  line-height: 1;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
-  cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  justify-self: center;
+  transform: none;
 }
 
 .news-arrow:hover:not(:disabled),
 .news-arrow:focus-visible:not(:disabled) {
-  border-color: rgba(201, 0, 0, 0.45);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
   transform: translateY(-2px);
 }
 
-.news-arrow:focus-visible {
-  outline: 2px solid var(--hino-red);
-  outline-offset: 3px;
+.news-arrow:active {
+  transform: scale(0.98);
 }
 
 .news-arrow:disabled {
@@ -2461,11 +2451,6 @@ blockquote {
     width: calc(100% - 24px);
   }
 
-  .news-arrow {
-    width: 40px;
-    height: 40px;
-    font-size: 1.7rem;
-  }
 
   .news-card {
     grid-template-columns: 1fr;

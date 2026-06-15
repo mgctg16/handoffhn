@@ -476,9 +476,9 @@ function renderCards(section, type) {
       <section class="card-section section-pattern" id="news" aria-labelledby="news-title">
         ${sectionHeading(section, "news-title")}
         <div class="news-carousel">
-          <button class="news-arrow news-arrow-prev" type="button" aria-label="Bài viết trước"${controlDisabled}>‹</button>
+          <button class="timeline-arrow timeline-arrow-prev news-arrow" type="button" aria-label="Bài viết trước"${controlDisabled}><span class="sr-only">Bài viết trước</span></button>
           <div class="card-grid">${items}</div>
-          <button class="news-arrow news-arrow-next" type="button" aria-label="Bài viết tiếp theo"${controlDisabled}>›</button>
+          <button class="timeline-arrow timeline-arrow-next news-arrow" type="button" aria-label="Bài viết tiếp theo"${controlDisabled}><span class="sr-only">Bài viết tiếp theo</span></button>
         </div>
       </section>
     `;
