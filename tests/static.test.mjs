@@ -483,6 +483,7 @@ test("css includes approved UI/UX Pro Max quality gates", () => {
   assert.match(css, /\.stat-cell\s*\{[^}]*justify-items:\s*center/s);
   assert.match(css, /\.stats-grid\s*\{[^}]*grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/s);
   assert.match(css, /@media \(max-width:\s*1100px\) and \(min-width:\s*769px\)[\s\S]*?\.stats-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.doesNotMatch(css, /\.stat-cell \+ \.stat-cell\s*\{[^}]*border-top:\s*0/s);
   assert.match(css, /\.stat-number--short\s*\{/);
   assert.match(css, /\.stat-number--wide\s*\{/);
   assert.match(css, /\.stat-number--long\s*\{/);

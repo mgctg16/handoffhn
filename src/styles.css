@@ -2380,10 +2380,6 @@ blockquote {
     box-shadow: none !important;
   }
 
-  .stat-cell + .stat-cell {
-    border-top: 0;
-  }
-
   .portrait-placeholder,
   .appreciation-portrait-panel {
     min-height: 240px;
