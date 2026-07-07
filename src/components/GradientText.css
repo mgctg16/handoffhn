@@ -1,0 +1,71 @@
+.animated-gradient-text {
+  position: relative;
+  display: inline-flex;
+  max-width: fit-content;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.25rem;
+  font: inherit;
+  font-weight: inherit;
+  backdrop-filter: blur(10px);
+  transition: box-shadow 0.5s ease-out;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.animated-gradient-text.with-border {
+  padding: 0.35rem 0.75rem;
+}
+
+.gradient-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gradient-overlay::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  border-radius: inherit;
+  transform: translate(-50%, -50%);
+  background-color: #120f17;
+  z-index: -1;
+}
+
+.text-content {
+  display: inline-block;
+  position: relative;
+  z-index: 2;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  overflow: visible;
+}
+
+.hero-gradient-text {
+  overflow: visible;
+  padding-block: 0.06em 0.28em;
+  margin-block: -0.06em 0;
+  line-height: 1.28;
+  vertical-align: baseline;
+}
+
+.hero-gradient-text-host {
+  display: inline-flex;
+  align-items: flex-start;
+  min-height: 1.48em;
+  overflow: visible;
+}
+
+.hero-gradient-text .text-content {
+  padding-block: 0.02em 0.22em;
+  line-height: 1.28;
+  overflow: visible;
+}
