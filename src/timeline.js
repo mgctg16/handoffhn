@@ -1,3 +1,9 @@
+export function calculateCenteredTarget(eventOffsetLeft, eventWidth, viewportWidth, maximumScroll) {
+  const upperBound = Math.max(0, maximumScroll);
+  const centeredTarget = eventOffsetLeft + eventWidth / 2 - viewportWidth / 2;
+  return Math.min(upperBound, Math.max(0, centeredTarget));
+}
+
 export function setupTimeline(section) {
   if (!section || typeof window === "undefined") {
     return () => {};
@@ -38,8 +44,12 @@ export function setupTimeline(section) {
   }
 
   function targetLeftForEvent(event) {
-    const leadingGutter = Math.max(0, track.offsetLeft);
-    return Math.min(maxScroll(), Math.max(0, event.offsetLeft - leadingGutter));
+    return calculateCenteredTarget(
+      event.offsetLeft,
+      event.offsetWidth,
+      viewport.clientWidth,
+      maxScroll()
+    );
   }
 
   function eventCenterRatios(distance) {
