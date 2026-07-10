@@ -252,10 +252,27 @@ test("timeline supports drag scrolling without active text reflow", () => {
   assert.doesNotMatch(currentTitleBlock, /font-weight/);
 
   const currentEventBlock = styles.match(/\.milestone-event\.is-current \{[\s\S]*?\n\}/)?.[0] || "";
-  assert.match(currentEventBlock, /translateY\(-20px\) scale\(1\.08\)/);
+  assert.doesNotMatch(currentEventBlock, /transform:/);
 
   const currentCardBlock = styles.match(/\.milestone-event\.is-current \.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(currentCardBlock, /box-shadow:/);
+  assert.match(currentCardBlock, /translateY\(-20px\) scale\(1\.08\)/);
+
+  const cardBlock = styles.match(/\.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
+  assert.match(cardBlock, /margin:\s*18px auto 0/);
+
+  const railBlock = styles.match(/\.timeline-rail \{[\s\S]*?\n\}/)?.[0] || "";
+  assert.match(railBlock, /margin:\s*0 0 44px/);
+
+  const trackBlock = styles.match(/\.timeline-track \{[\s\S]*?\n\}/)?.[0] || "";
+  assert.match(trackBlock, /padding:\s*6px 0 0/);
+  assert.match(
+    styles,
+    /@media \(max-width: 900px\) \{[\s\S]*?\.timeline-track\s*\{[^}]*padding:\s*6px 0 0/s
+  );
+
+  const canvasBlock = styles.match(/\.timeline-canvas \{[\s\S]*?\n\}/)?.[0] || "";
+  assert.match(canvasBlock, /padding:\s*0 var\(--timeline-center-gutter\) 72px/);
 });
 
 
