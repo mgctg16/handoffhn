@@ -482,9 +482,13 @@ test("timeline motion stays gesture-first, subtle, and reduced-motion safe", () 
   assert.match(js, /is-advancing/);
   assert.match(
     css,
-    /\.milestone-event\.is-leaving \.milestone-card\s*\{[^}]*animation:\s*milestoneCardLeave 650ms/s
+    /\.milestone-event\.is-leaving \.milestone-card\s*\{[^}]*transform:\s*translateY\(8px\) scale\(1\)/s
   );
-  assert.match(css, /@keyframes milestoneCardLeave/);
+  assert.match(
+    css,
+    /\.milestone-card\s*\{[^}]*transform 360ms cubic-bezier\(0\.16, 1, 0\.3, 1\)/s
+  );
+  assert.doesNotMatch(css, /@keyframes milestoneCardLeave/);
   assert.match(css, /\.timeline-viewport\.is-settling/);
   assert.match(js, /classList\.add\("is-settling"\)/);
   assert.match(js, /classList\.remove\("is-settling"\)/);

@@ -1674,7 +1674,9 @@ blockquote {
 }
 
 .milestone-event.is-leaving .milestone-card {
-  animation: milestoneCardLeave 650ms linear both;
+  opacity: 0.72;
+  transform: translateY(8px) scale(1);
+  box-shadow: none;
 }
 
 .timeline-marker.is-entering .timeline-dot {
@@ -1702,20 +1704,6 @@ blockquote {
   to {
     opacity: 1;
     transform: translateX(0) translateY(0) scale(var(--milestone-active-scale));
-  }
-}
-
-@keyframes milestoneCardLeave {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(var(--milestone-active-scale));
-    box-shadow: 0 28px 60px rgba(15, 23, 42, 0.24), 0 8px 20px rgba(201, 0, 0, 0.1);
-  }
-
-  to {
-    opacity: 0.72;
-    transform: translateY(8px) scale(1);
-    box-shadow: none;
   }
 }
 
@@ -2819,7 +2807,6 @@ blockquote {
 
   .milestone-event.is-entering .milestone-copy,
   .milestone-event.is-entering .milestone-card,
-  .milestone-event.is-leaving .milestone-card,
   .timeline-marker.is-entering .timeline-dot {
     animation: none;
   }
