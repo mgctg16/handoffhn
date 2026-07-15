@@ -599,27 +599,18 @@ test("css avoids responsive overflow and focus clipping regressions", () => {
   );
 });
 
-test("timeline uses native horizontal scrolling and respects reduced motion", () => {
+test("timeline uses controlled autoplay and scoped interaction listeners", () => {
   const js = file("src/timeline.js");
-  const css = file("src/styles.css");
-  assert.match(js, /setupTimeline/);
-  assert.match(js, /scrollToProgress/);
-  assert.match(js, /goToIndex/);
-  assert.match(js, /viewport\.scrollTo/);
-  assert.match(js, /viewport\.scrollLeft/);
-  assert.doesNotMatch(js, /ScrollTrigger/);
-  assert.doesNotMatch(js, /pin:\s*true/);
-  assert.doesNotMatch(js, /scrub/);
-  assert.match(js, /is-active/);
-  assert.match(js, /is-current/);
-  assert.match(js, /aria-current/);
-  assert.match(js, /setInterval/);
-  assert.match(js, /data-timeline-next/);
-  assert.match(js, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /\.timeline-viewport\s*\{[^}]*overflow-x:\s*auto/s);
-  assert.match(css, /\.milestone-event\.is-active/);
-  assert.match(css, /\.timeline-header/);
-  assert.match(css, /\.timeline-progress\s*\{/);
+
+  assert.match(js, /createTimelineAutoplayScheduler/);
+  assert.match(js, /TIMELINE_AUTOPLAY_DWELL_MS/);
+  assert.match(js, /TIMELINE_INTERACTION_RESUME_MS/);
+  assert.match(js, /IntersectionObserver/);
+  assert.match(js, /visibilitychange/);
+  assert.match(js, /viewport\.addEventListener\("wheel"/);
+  assert.doesNotMatch(js, /window\.setInterval|setInterval\(/);
+  assert.doesNotMatch(js, /window\.addEventListener\("wheel"/);
+  assert.doesNotMatch(js, /data-timeline-prev|data-timeline-next/);
 });
 
 test("smooth scrolling uses Lenis and stays synchronized with ScrollTrigger", () => {

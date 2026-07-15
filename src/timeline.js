@@ -70,8 +70,6 @@ export function setupTimeline(section) {
   const canvas = section.querySelector(".timeline-canvas");
   const events = Array.from(section.querySelectorAll(".milestone-event"));
   const markers = Array.from(section.querySelectorAll("[data-timeline-marker]"));
-  const previousButton = section.querySelector("[data-timeline-prev]");
-  const nextButton = section.querySelector("[data-timeline-next]");
   const progressFill = section.querySelector("[data-timeline-progress]");
   const initialYear = section.dataset.initialYear;
   const initialIndex = events.findIndex((event) => event.dataset.year === initialYear);
@@ -83,11 +81,19 @@ export function setupTimeline(section) {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let ratios = [];
   let currentProgress = 0;
-  let idleUntil = 0;
-  let autoplayId = null;
   let isDragging = false;
+  let isSectionVisible = false;
+  let autoplayEnabled = false;
+  let navigationToken = 0;
+  let scrollAnimation = null;
   let dragStartX = 0;
   let dragStartScrollLeft = 0;
+
+  const autoplay = createTimelineAutoplayScheduler({
+    setTimer: (callback, delay) => window.setTimeout(callback, delay),
+    clearTimer: (id) => window.clearTimeout(id),
+    onAdvance: advanceAutoplay
+  });
 
   function maxScroll() {
     return Math.max(0, viewport.scrollWidth - viewport.clientWidth);
@@ -169,32 +175,94 @@ export function setupTimeline(section) {
     return index;
   }
 
-  function scrollToProgress(progress, options = {}) {
-    const clamped = Math.min(1, Math.max(0, progress));
-    viewport.scrollTo({
-      left: clamped * maxScroll(),
-      behavior: options.immediate || reduceMotion.matches ? "auto" : "smooth"
-    });
-    applyProgress(clamped, ratios);
-  }
-
-  function goToIndex(index, options = {}) {
-    if (!ratios.length) {
+  function cancelScrollAnimation() {
+    if (!scrollAnimation) {
       return;
     }
-
-    const safeIndex = Math.min(events.length - 1, Math.max(0, index));
-    const targetLeft = targetLeftForEvent(events[safeIndex]);
-    const distance = maxScroll();
-    viewport.scrollTo({
-      left: targetLeft,
-      behavior: options.immediate || reduceMotion.matches ? "auto" : "smooth"
-    });
-    applyProgress(distance > 0 ? targetLeft / distance : 1, ratios);
+    window.cancelAnimationFrame(scrollAnimation.id);
+    scrollAnimation.resolve(false);
+    scrollAnimation = null;
   }
 
-  function pauseAutoplay(duration = 5200) {
-    idleUntil = Date.now() + duration;
+  function animateScrollTo(targetLeft, options = {}) {
+    cancelScrollAnimation();
+    const clampedTarget = Math.min(maxScroll(), Math.max(0, targetLeft));
+    if (options.immediate || reduceMotion.matches) {
+      viewport.scrollLeft = clampedTarget;
+      applyProgress(currentScrollProgress(), ratios);
+      return Promise.resolve(true);
+    }
+
+    const startLeft = viewport.scrollLeft;
+    const distance = clampedTarget - startLeft;
+    const startedAt = performance.now();
+
+    return new Promise((resolve) => {
+      function tick(now) {
+        const progress = Math.min(1, (now - startedAt) / TIMELINE_SCROLL_DURATION_MS);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        viewport.scrollLeft = startLeft + distance * eased;
+        if (progress < 1) {
+          scrollAnimation.id = window.requestAnimationFrame(tick);
+          return;
+        }
+        scrollAnimation = null;
+        viewport.scrollLeft = clampedTarget;
+        applyProgress(currentScrollProgress(), ratios);
+        resolve(true);
+      }
+
+      scrollAnimation = {
+        id: window.requestAnimationFrame(tick),
+        resolve
+      };
+    });
+  }
+
+  async function goToIndex(index, options = {}) {
+    if (!ratios.length) {
+      return false;
+    }
+
+    const token = navigationToken + 1;
+    navigationToken = token;
+    const safeIndex = Math.min(events.length - 1, Math.max(0, index));
+    const fromIndex = currentIndex();
+    const direction = options.direction || (safeIndex >= fromIndex ? "forward" : "backward");
+    section.dataset.timelineDirection = direction;
+    const targetLeft = targetLeftForEvent(events[safeIndex]);
+    const completed = await animateScrollTo(targetLeft, options);
+    if (!completed || token !== navigationToken) {
+      return false;
+    }
+    applyProgress(currentScrollProgress(), ratios);
+    return true;
+  }
+
+  function canAutoplay() {
+    return autoplayEnabled && isSectionVisible && !document.hidden && !isDragging;
+  }
+
+  function scheduleAutoplay(delay = TIMELINE_AUTOPLAY_DWELL_MS) {
+    autoplay.cancel();
+    if (canAutoplay()) {
+      autoplay.schedule(delay);
+    }
+  }
+
+  async function advanceAutoplay() {
+    if (!canAutoplay()) {
+      return;
+    }
+    const index = currentIndex();
+    const nextIndex = index >= events.length - 1 ? 0 : index + 1;
+    const completed = await goToIndex(nextIndex, {
+      source: "autoplay",
+      immediate: index >= events.length - 1
+    });
+    if (completed) {
+      scheduleAutoplay();
+    }
   }
 
   function build() {
@@ -210,7 +278,11 @@ export function setupTimeline(section) {
 
     const distance = maxScroll();
     ratios = eventCenterRatios(distance);
+    autoplayEnabled = !reduceMotion.matches && events.length > 1 && distance > 0;
     applyProgress(currentScrollProgress(), ratios);
+    if (!autoplayEnabled) {
+      autoplay.cancel();
+    }
   }
 
   function onResize() {
@@ -219,36 +291,25 @@ export function setupTimeline(section) {
 
   function onMotionChange() {
     build();
+    scheduleAutoplay();
   }
 
   function onViewportScroll() {
     applyProgress(currentScrollProgress(), ratios);
   }
 
-  function onPreviousClick() {
-    pauseAutoplay();
-    goToIndex(currentIndex() - 1);
-  }
-
-  function onNextClick() {
-    pauseAutoplay();
-    goToIndex(currentIndex() + 1);
-  }
-
-  function onMarkerClick(event) {
-    pauseAutoplay();
-    goToIndex(markers.indexOf(event.currentTarget));
-  }
-
-  function onUserInput() {
-    pauseAutoplay();
+  async function onMarkerClick(event) {
+    autoplay.cancel();
+    await goToIndex(markers.indexOf(event.currentTarget), { source: "marker" });
+    scheduleAutoplay(TIMELINE_INTERACTION_RESUME_MS);
   }
 
   function onPointerDown(event) {
     if (event.button !== 0 && event.pointerType === "mouse") {
       return;
     }
-    pauseAutoplay();
+    autoplay.cancel();
+    cancelScrollAnimation();
     isDragging = true;
     dragStartX = event.clientX;
     dragStartScrollLeft = viewport.scrollLeft;
@@ -262,6 +323,7 @@ export function setupTimeline(section) {
     }
     event.preventDefault();
     viewport.scrollLeft = dragStartScrollLeft - (event.clientX - dragStartX);
+    applyProgress(currentScrollProgress(), ratios);
   }
 
   function stopDragging(event) {
@@ -270,42 +332,54 @@ export function setupTimeline(section) {
     }
     isDragging = false;
     viewport.classList.remove("is-dragging");
-    viewport.releasePointerCapture?.(event.pointerId);
+    if (viewport.hasPointerCapture?.(event.pointerId)) {
+      viewport.releasePointerCapture(event.pointerId);
+    }
+    scheduleAutoplay(TIMELINE_INTERACTION_RESUME_MS);
   }
 
-  function isTimelineVisible() {
-    const rect = section.getBoundingClientRect();
-    return rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.2;
+  function onVisibilityChange() {
+    if (document.hidden) {
+      autoplay.cancel();
+    } else {
+      scheduleAutoplay();
+    }
   }
+
+  function onViewportWheel(event) {
+    if (Math.abs(event.deltaX) <= 0) {
+      return;
+    }
+    autoplay.cancel();
+    cancelScrollAnimation();
+    scheduleAutoplay(TIMELINE_INTERACTION_RESUME_MS);
+  }
+
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    isSectionVisible = entries.some((entry) => entry.isIntersecting);
+    if (isSectionVisible) {
+      scheduleAutoplay();
+    } else {
+      autoplay.cancel();
+    }
+  }, { threshold: 0.2 });
 
   build();
   if (initialIndex >= 0) {
     goToIndex(initialIndex, { immediate: true });
   }
 
-  if (!reduceMotion.matches) {
-    autoplayId = window.setInterval(() => {
-      if (document.hidden || Date.now() < idleUntil || !isTimelineVisible()) {
-        return;
-      }
-
-      const nextIndex = currentIndex() >= events.length - 1 ? 0 : currentIndex() + 1;
-      goToIndex(nextIndex);
-    }, 2200);
-  }
+  visibilityObserver.observe(section);
 
   viewport.addEventListener("scroll", onViewportScroll, { passive: true });
+  viewport.addEventListener("wheel", onViewportWheel, { passive: true });
   viewport.addEventListener("pointerdown", onPointerDown);
   viewport.addEventListener("pointermove", onPointerMove);
   viewport.addEventListener("pointerup", stopDragging);
   viewport.addEventListener("pointercancel", stopDragging);
   viewport.addEventListener("lostpointercapture", stopDragging);
   window.addEventListener("resize", onResize);
-  window.addEventListener("wheel", onUserInput, { passive: true });
-  window.addEventListener("touchstart", onUserInput, { passive: true });
-  window.addEventListener("keydown", onUserInput);
-  previousButton?.addEventListener("click", onPreviousClick);
-  nextButton?.addEventListener("click", onNextClick);
+  document.addEventListener("visibilitychange", onVisibilityChange);
   markers.forEach((marker) => {
     marker.addEventListener("click", onMarkerClick);
   });
@@ -316,24 +390,21 @@ export function setupTimeline(section) {
   }
 
   return () => {
+    autoplay.cancel();
+    cancelScrollAnimation();
+    visibilityObserver.disconnect();
     viewport.removeEventListener("scroll", onViewportScroll);
+    viewport.removeEventListener("wheel", onViewportWheel);
     viewport.removeEventListener("pointerdown", onPointerDown);
     viewport.removeEventListener("pointermove", onPointerMove);
     viewport.removeEventListener("pointerup", stopDragging);
     viewport.removeEventListener("pointercancel", stopDragging);
     viewport.removeEventListener("lostpointercapture", stopDragging);
     window.removeEventListener("resize", onResize);
-    window.removeEventListener("wheel", onUserInput);
-    window.removeEventListener("touchstart", onUserInput);
-    window.removeEventListener("keydown", onUserInput);
-    previousButton?.removeEventListener("click", onPreviousClick);
-    nextButton?.removeEventListener("click", onNextClick);
+    document.removeEventListener("visibilitychange", onVisibilityChange);
     markers.forEach((marker) => {
       marker.removeEventListener("click", onMarkerClick);
     });
-    if (autoplayId) {
-      window.clearInterval(autoplayId);
-    }
     if (typeof reduceMotion.removeEventListener === "function") {
       reduceMotion.removeEventListener("change", onMotionChange);
     } else if (typeof reduceMotion.removeListener === "function") {
