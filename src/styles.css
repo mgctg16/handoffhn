@@ -1608,14 +1608,21 @@ blockquote {
 
 .milestone-card {
   position: relative;
+  display: block;
   width: calc(100% - clamp(22px, 2.4vw, 34px));
   margin: 18px auto 0;
+  padding: 0;
   overflow: hidden;
   border: 1px solid rgba(15, 23, 42, 0.08);
   border-radius: 0;
+  appearance: none;
   background: #f1f2f4;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
   box-shadow: none;
   opacity: 0.72;
+  cursor: pointer;
   transform: translateY(8px);
   transform-origin: center top;
   transition:
@@ -1623,6 +1630,11 @@ blockquote {
     opacity 260ms ease,
     box-shadow 360ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity, box-shadow;
+}
+
+.milestone-card:focus-visible {
+  outline: 2px solid rgba(201, 0, 0, 0.72);
+  outline-offset: 4px;
 }
 
 .milestone-event.is-active .milestone-card,

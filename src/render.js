@@ -392,6 +392,7 @@ function renderMilestones(section, activeLang) {
       const titleHtml = eventParts.length > 1
         ? `<ul class="milestone-title milestone-list">${eventParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`
         : `<h3 class="milestone-title">${escapeHtml(eventParts[0] || item.text)}</h3>`;
+      const cardLabel = `${item.year}: ${item.text}`;
       const image = hasImage
         ? `<img class="milestone-image" src="${safeUrl(item.imageUrl, "", { allowHash: false })}" alt="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}" loading="lazy" draggable="false">`
         : `<div class="milestone-image milestone-image-placeholder" role="img" aria-label="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}"></div>`;
@@ -401,9 +402,9 @@ function renderMilestones(section, activeLang) {
         <div class="milestone-copy">
           ${titleHtml}
         </div>
-        <figure class="milestone-card">
+        <button class="milestone-card" type="button" data-timeline-card aria-label="${escapeHtml(cardLabel)}">
           ${image}
-        </figure>
+        </button>
       </article>
     `;
     })

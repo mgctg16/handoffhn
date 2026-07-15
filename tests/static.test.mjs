@@ -448,6 +448,21 @@ test("rendered milestones explain gesture navigation and keep progress passive",
   assert.doesNotMatch(vi, /data-timeline-prev|data-timeline-next/);
 });
 
+test("milestone images navigate with the same accessible controls as years", async () => {
+  const [{ content }, { renderPage }] = await Promise.all([
+    import("../src/content.js"),
+    import("../src/render.js")
+  ]);
+
+  const html = renderPage(content.vi, "vi");
+  const timeline = file("src/timeline.js");
+
+  assert.match(html, /<button class="milestone-card" type="button" data-timeline-card aria-label="1995:/);
+  assert.match(timeline, /querySelectorAll\("\[data-timeline-card\]"\)/);
+  assert.match(timeline, /card\.addEventListener\("click", onCardClick\)/);
+  assert.match(timeline, /navigateManually\(cards\.indexOf\(event\.currentTarget\), "card"\)/);
+});
+
 test("timeline motion stays gesture-first, subtle, and reduced-motion safe", () => {
   const css = file("src/styles.css");
   const js = file("src/timeline.js");

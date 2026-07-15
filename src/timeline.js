@@ -74,6 +74,7 @@ export function setupTimeline(section) {
   const canvas = section.querySelector(".timeline-canvas");
   const events = Array.from(section.querySelectorAll(".milestone-event"));
   const markers = Array.from(section.querySelectorAll("[data-timeline-marker]"));
+  const cards = Array.from(section.querySelectorAll("[data-timeline-card]"));
   const progressFill = section.querySelector("[data-timeline-progress]");
   const initialYear = section.dataset.initialYear;
   const initialIndex = events.findIndex((event) => event.dataset.year === initialYear);
@@ -359,6 +360,10 @@ export function setupTimeline(section) {
     navigateManually(markers.indexOf(event.currentTarget), "marker");
   }
 
+  function onCardClick(event) {
+    navigateManually(cards.indexOf(event.currentTarget), "card");
+  }
+
   function onViewportKeyDown(event) {
     const targetIndex = resolveTimelineKey(event.key, currentIndex(), events.length - 1);
     if (targetIndex === null) {
@@ -469,6 +474,9 @@ export function setupTimeline(section) {
   markers.forEach((marker) => {
     marker.addEventListener("click", onMarkerClick);
   });
+  cards.forEach((card) => {
+    card.addEventListener("click", onCardClick);
+  });
   if (typeof reduceMotion.addEventListener === "function") {
     reduceMotion.addEventListener("change", onMotionChange);
   } else if (typeof reduceMotion.addListener === "function") {
@@ -492,6 +500,9 @@ export function setupTimeline(section) {
     document.removeEventListener("visibilitychange", onVisibilityChange);
     markers.forEach((marker) => {
       marker.removeEventListener("click", onMarkerClick);
+    });
+    cards.forEach((card) => {
+      card.removeEventListener("click", onCardClick);
     });
     if (typeof reduceMotion.removeEventListener === "function") {
       reduceMotion.removeEventListener("change", onMotionChange);
