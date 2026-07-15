@@ -220,9 +220,9 @@ test("rendered statistics expose animated numeric counters", async () => {
   assert.match(html, /class="stat-number stat-number--wide"[\s\S]*data-count-to="831809"/);
   assert.match(html, /class="stat-unit">Nhân viên<\/p>/);
   assert.match(html, /class="stat-label">Nhân sự đại lý Hino tại Việt Nam<\/h3>/);
-  assert.match(html, /class="stat-disclaimer">Tại thời điểm tháng 6\/2026<\/p>/);
   assert.match(html, /class="stat-label">Dịch vụ bảo dưỡng CPUS<\/h3>/);
-  assert.match(html, /class="stats-note">\*Số liệu cập nhật đến ngày 18\/06\/2026<\/p>/);
+  assert.match(html, /class="stat-disclaimer">Tại thời điểm tháng 6\/2026<\/p>/);
+  assert.doesNotMatch(html, /class="stats-note"/);
   assert.doesNotMatch(html, /class="stat-hex"/);
   assert.doesNotMatch(html, /Hệ thống đại lý chính hãng/);
 });
@@ -237,14 +237,19 @@ test("timeline supports drag scrolling without active text reflow", () => {
   assert.match(timeline, /viewport\.scrollLeft = dragStartScrollLeft - deltaX/);
   assert.match(timeline, /const eased = easeTimelineScroll\(progress\)/);
   assert.match(timeline, /options\.source === "autoplay"/);
+  assert.match(timeline, /querySelectorAll\("\[data-timeline-card\]"\)/);
+  assert.match(timeline, /viewport\.setPointerCapture\?\.\(event\.pointerId\)/);
+  assert.match(timeline, /card\.addEventListener\("click", onCardClick\)/);
+  assert.match(timeline, /section\.style\.setProperty\("--timeline-copy-height"/);
   assert.match(
     timeline,
     /calculateCenteredTarget\(\s*event\.offsetLeft,\s*event\.offsetWidth,\s*viewport\.clientWidth,\s*maxScroll\(\)\s*\)/s
   );
   assert.match(
     styles,
-    /--timeline-center-gutter:\s*max\(0px, calc\(\(100vw - var\(--timeline-item-width\)\) \/ 2\)\)/
+    /--timeline-edge-padding:\s*clamp\(18px, 3vw, 48px\)/
   );
+  assert.match(timeline, /if \(distance <= closestDistance\)/);
   assert.match(styles, /\.milestone-event\s*\{[^}]*scroll-snap-align:\s*center/s);
   assert.match(timeline, /progress >= 0\.995[\s\S]*activeIndex = events\.length - 1/);
   assert.doesNotMatch(timeline, /classList\.toggle\("is-active", reached\)/);
@@ -272,14 +277,18 @@ test("timeline supports drag scrolling without active text reflow", () => {
   assert.match(currentCardBlock, /box-shadow:/);
   assert.match(currentCardBlock, /translateY\(0\) scale\(var\(--milestone-active-scale\)\)/);
   assert.match(styles, /\.timeline-section\s*\{[^}]*--milestone-active-scale:\s*1\.2/s);
-  assert.match(
-    styles,
-    /\.timeline-section\s*\{[^}]*--timeline-center-gutter:\s*calc\(\(100vw - var\(--timeline-item-width\)\) \/ 2\)/s
-  );
 
   const cardBlock = styles.match(/\.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(cardBlock, /margin:\s*18px auto 0/);
   assert.match(cardBlock, /transform-origin:\s*center top/);
+  assert.match(cardBlock, /cursor:\s*pointer/);
+
+  const copyBlock = styles.match(/\.milestone-copy \{[\s\S]*?\n\}/)?.[0] || "";
+  assert.match(copyBlock, /height:\s*var\(--timeline-copy-height, auto\)/);
+  assert.match(styles, /\.timeline-end-cap\s*\{[^}]*var\(--timeline-copy-height/s);
+
+  const imageBlock = styles.match(/(?:^|\n)\.milestone-image \{[\s\S]*?\n\}/)?.[0] || "";
+  assert.match(imageBlock, /-webkit-user-drag:\s*none/);
 
   assert.match(
     styles,
@@ -298,7 +307,7 @@ test("timeline supports drag scrolling without active text reflow", () => {
   );
 
   const canvasBlock = styles.match(/\.timeline-canvas \{[\s\S]*?\n\}/)?.[0] || "";
-  assert.match(canvasBlock, /padding:\s*0 var\(--timeline-center-gutter\) 72px/);
+  assert.match(canvasBlock, /padding:\s*0 var\(--timeline-edge-padding\) 72px/);
   assert.match(canvasBlock, /box-sizing:\s*border-box/);
 });
 
@@ -424,8 +433,12 @@ test("rendered milestones expose unpinned horizontal timeline", async () => {
   assert.match(html, /class="timeline-dot"/);
   assert.match(html, /class="timeline-marker-year">2026<\/span>/);
   assert.match(html, /data-initial-year="1996"/);
-  assert.doesNotMatch(html, /data-timeline-prev/);
-  assert.doesNotMatch(html, /data-timeline-next/);
+  assert.match(html, /data-timeline-prev/);
+  assert.match(html, /data-timeline-next/);
+  assert.match(html, /class="timeline-marker-end-cap"/);
+  assert.match(html, /class="timeline-end-cap"/);
+  assert.match(html, /class="timeline-end-cap-logo" src="src\/a30new\.svg"/);
+  assert.match(html, /class="milestone-card" type="button" data-timeline-card aria-label="2008:/);
   assert.match(html, /class="timeline-progress"/);
 });
 
@@ -447,7 +460,8 @@ test("rendered milestones explain gesture navigation and keep progress passive",
   assert.match(vi, /class="milestone-image"[^>]*draggable="false"/);
   assert.match(vi, /class="timeline-progress"/);
   assert.doesNotMatch(vi, /timeline-progress[^>]*(button|slider|tabindex)/);
-  assert.doesNotMatch(vi, /data-timeline-prev|data-timeline-next/);
+  assert.match(vi, /data-timeline-prev/);
+  assert.match(vi, /data-timeline-next/);
 });
 
 test("milestone images navigate with the same accessible controls as years", async () => {
@@ -601,10 +615,12 @@ test("rendered appreciation letter uses director portrait and real copy", async 
 
   assert.match(vi, /<section class="appreciation-section section-pattern" id="appreciation" aria-labelledby="appreciation-title">/);
   assert.match(vi, /<img class="director-image" src="src\/assets\/director-yoshio-osaka-website\.png" width="1920" height="1081" alt="Ông Yoshio Osaka trước xe tải Hino 500" loading="lazy">/);
-  assert.match(vi, /Thân gửi Quý khách hàng và Quý Đại lý,/);
+  assert.match(vi, /Kính gửi Quý Khách hàng, Quý Đại lý và Quý Đối tác,/);
+  assert.match(vi, /class="letter-closing">Trân trọng,<\/p>/);
   assert.match(vi, /YOSHIO OSAKA/);
   assert.match(en, /APPRECIATION LETTER/);
-  assert.match(en, /Dear our customers and dealers,/);
+  assert.match(en, /Dear valued our customers, dealers and partners,/);
+  assert.doesNotMatch(en, /class="letter-closing"/);
   assert.match(en, /Mr\. YOSHIO OSAKA/);
   assert.doesNotMatch(vi + en, /TGĐ photo placeholder|&lt;Hino cung cấp&gt;/);
 });
@@ -679,7 +695,8 @@ test("timeline uses controlled autoplay and scoped interaction listeners", () =>
   assert.match(js, /viewport\.addEventListener\("wheel"/);
   assert.doesNotMatch(js, /window\.setInterval|setInterval\(/);
   assert.doesNotMatch(js, /window\.addEventListener\("wheel"/);
-  assert.doesNotMatch(js, /data-timeline-prev|data-timeline-next/);
+  assert.match(js, /data-timeline-prev/);
+  assert.match(js, /data-timeline-next/);
 });
 
 test("smooth scrolling uses Lenis and stays synchronized with ScrollTrigger", () => {

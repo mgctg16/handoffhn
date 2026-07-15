@@ -116,13 +116,14 @@ export const content = {
       },
       appreciation: {
         heading: "LỜI TRI ÂN",
-        salutation: "Thân gửi Quý khách hàng và Quý Đại lý,",
+        salutation: "Kính gửi Quý Khách hàng, Quý Đại lý và Quý Đối tác,",
         body: [
-          "Trước hết tôi xin bày tỏ sự cảm ơn chân thành tới các Quý khách hàng thân thiết đã tin tưởng lựa chọn, sử dụng sản phẩm của chúng tôi; và lời chúc mừng tới các Quý Đại lý với những thành công kinh doanh rực rỡ.",
-          "Là thương hiệu tiên phong trong lĩnh vực sản xuất xe thương mại tại Việt Nam, chúng tôi luôn cố gắng hết sức mình để đáp ứng yêu cầu của thị trường cũng như sự kỳ vọng của khách hàng bằng các sản phẩm có chất lượng tốt, độ bền cao cùng với các hoạt động hỗ trợ tổng thể, toàn diện.",
-          "Từ năm 2022, tôi có vinh dự đảm nhận vai trò trọng trách là Tổng Giám đốc của Hino Motors Việt Nam. Với nền tảng vững chắc được xây dựng hơn 25 năm qua, chúng tôi sẽ nỗ lực không ngừng để tiếp tục đồng hành với Quý vị hướng tới những mục tiêu cao hơn, xa hơn trong thời gian tới.",
-          "Thay mặt công ty Hino Motors Việt Nam, tôi xin gửi tới toàn thể các Quý vị lời chúc sức khỏe dồi dào, thành công viên mãn và luôn luôn kết nối bền chặt với thương hiệu Hino."
+          "Kể từ khi Hino Motors Việt Nam được thành lập vào năm 1996 với vai trò là nhà phân phối xe tải hàng đầu tại Việt Nam, chúng tôi luôn triển khai mọi hoạt động dựa trên triết lý đóng góp cho sự phát triển của xã hội, nâng cao chất lượng cuộc sống của người dân Việt Nam thông qua việc cung cấp những sản phẩm chất lượng cao, góp phần xây dựng một tương lai tốt đẹp hơn.",
+          "Nhờ sự tin tưởng và đồng hành của Quý Khách hàng, hơn 64.000 xe tải Hino đã được lựa chọn làm đối tác kinh doanh đáng tin cậy trên khắp Việt Nam. Đồng thời, chúng tôi không ngừng nâng cao và hoàn thiện các hoạt động hỗ trợ toàn diện, từ dịch vụ hậu mãi đến các giải pháp gia tăng giá trị trong chuỗi vận hành của khách hàng.",
+          "Nhân dịp này, tôi xin trân trọng gửi lời cảm ơn sâu sắc đến tất cả Quý Khách hàng, Quý Đại lý và Quý Đối tác đã luôn tin tưởng, lựa chọn Hino cho hoạt động kinh doanh của mình. Tôi cũng xin ghi nhận và cảm ơn sự tận tâm, nỗ lực của hệ thống đại lý đã góp phần tạo nên những thành công của Hino ngày hôm nay.",
+          "Với sứ mệnh doanh nghiệp của Hino: “Chúng tôi kiến tạo một thế giới và tương lai tốt đẹp hơn bằng cách giúp con người và hàng hóa đến được nơi cần đến”, chúng tôi sẽ tiếp tục nỗ lực xây dựng nền tảng vững chắc cho sự phát triển bền vững của công ty, song hành cùng trách nhiệm bảo vệ môi trường và luôn sát cánh cùng khách hàng trên mọi chặng đường phát triển."
         ],
+        closing: "Trân trọng,",
         signatureName: "YOSHIO OSAKA",
         signatureTitle: "Tổng Giám đốc",
         signatureCompany: "Hino Motors Việt Nam",
@@ -131,7 +132,6 @@ export const content = {
       },
       statistics: {
         heading: "NHỮNG CON SỐ ẤN TƯỢNG",
-        note: "*Số liệu cập nhật đến ngày 18/06/2026",
         items: [
           { value: 371, suffix: "", unit: "Nhân viên", label: "Nhân sự Hino Motors Việt Nam", disclaimer: "Tại thời điểm tháng 6/2026" },
           { value: 1295, suffix: "", unit: "Nhân viên", label: "Nhân sự đại lý Hino tại Việt Nam", disclaimer: "Tại thời điểm tháng 6/2026" },
@@ -213,13 +213,14 @@ export const content = {
       },
       appreciation: {
         heading: "APPRECIATION LETTER",
-        salutation: "Dear our customers and dealers,",
+        salutation: "Dear valued our customers, dealers and partners,",
         body: [
-          "I would like to express our gratitude to Hino loyal customers for always believing in us for your business, as well as our dedicated dealers for a successful 2022.",
-          "As the leader of Vietnam commercial vehicles manufacturer, we always do our best to satisfy the market demand and the customers’ expectations through our best products and total support activities for our customers.",
-          "Since 2022, it has been an honor to serve as General Director of Hino Motors Vietnam. Heritage from 25 years of success, we determine to continue reaching higher goals with you, our customers and dealers.",
-          "On behalf of Hino Motors Vietnam, I would like to wish you the best of health and a successful year together with Hino Vietnam."
+          "When Hino Motors Vietnam was founded in 1996 as the leading truck distributor in Vietnam, we always tries to implement all activities based on the principles that contributing for society development, increasing Vietnamese living standards by providing the highest quality products to contribute for building up new age.",
+          "Thanks to the support of our valued customers, more than 64,000 Hino vehicles have been chosen by customers in Vietnam as their business partners, and we have continued to strengthen our total support activities including after-sales and value chain.",
+          "On this occasion, I would like to express our gratitude to all of our loyal customers, dealers and partners for always believing in us for your business, as well as our dedicate dealer for a success.",
+          "In accordance with our Hino’s corporate mission as “We make a better world and future by helping people and goods get where they need to go”, we will strive to build a solid foundation for the company while carefully considering environmental protection, and to continuing to stand by our customers."
         ],
+        closing: "",
         signatureName: "Mr. YOSHIO OSAKA",
         signatureTitle: "General Director of Hino Motors Vietnam",
         signatureCompany: "",
@@ -228,7 +229,6 @@ export const content = {
       },
       statistics: {
         heading: "OUTSTANDING STATISTICS",
-        note: "*Data updated as of June 18, 2026",
         items: [
           { value: 371, suffix: "", unit: "Employees", label: "Hino Motors Vietnam Employees", disclaimer: "As of June 2026" },
           { value: 1295, suffix: "", unit: "Employees", label: "Dealer Employees in Vietnam", disclaimer: "As of June 2026" },

@@ -54,7 +54,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --timeline-center-gutter: max(0px, calc((100vw - var(--timeline-item-width)) / 2));
+  --timeline-edge-padding: clamp(18px, 3vw, 48px);
 }
 
 *,
@@ -791,8 +791,11 @@ blockquote {
 }
 
 .letter-body p {
-  margin: 0 0 8px;
+  margin: 0 0 clamp(12px, 1vw, 16px);
   break-inside: avoid;
+  orphans: 3;
+  text-wrap: pretty;
+  widows: 3;
 }
 
 .letter-body p:last-child {
@@ -804,6 +807,16 @@ blockquote {
   font-synthesis: none;
   font-weight: 700;
   text-rendering: geometricPrecision;
+}
+
+.letter-closing {
+  margin: clamp(12px, 1.4vw, 18px) 0 0;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.letter-closing + .person-line {
+  margin-top: 8px;
 }
 
 .person-line {
@@ -1173,7 +1186,6 @@ blockquote {
 .timeline-section {
   --milestone-active-scale: 1.2;
   --milestone-enter-x: 12px;
-  --timeline-center-gutter: calc((100vw - var(--timeline-item-width)) / 2);
   position: relative;
   min-height: auto;
   padding: clamp(76px, 9vw, 126px) 0 clamp(64px, 8vw, 104px);
@@ -1238,7 +1250,9 @@ blockquote {
 
 .timeline-controls {
   position: absolute;
-  inset: clamp(72px, 9vw, 118px) 0 auto;
+  top: 50%;
+  right: 0;
+  left: 0;
   z-index: 20;
   pointer-events: none;
 }
@@ -1401,12 +1415,12 @@ blockquote {
   position: relative;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: repeat(19, minmax(var(--timeline-item-width), 1fr));
+  grid-template-columns: repeat(20, minmax(var(--timeline-item-width), 1fr));
   align-items: start;
   width: max-content;
   min-width: 100%;
   margin: 0 0 44px;
-  padding: 0 var(--timeline-center-gutter);
+  padding: 0 var(--timeline-edge-padding);
 }
 
 .timeline-rail::before {
@@ -1433,6 +1447,11 @@ blockquote {
   font: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.timeline-marker-end-cap {
+  display: block;
+  min-width: var(--timeline-item-width);
 }
 
 .timeline-dot {
@@ -1473,7 +1492,7 @@ blockquote {
   align-items: start;
   gap: 0;
   width: max-content;
-  padding: 0 var(--timeline-center-gutter) 72px;
+  padding: 0 var(--timeline-edge-padding) 72px;
   isolation: isolate;
 }
 
@@ -1547,6 +1566,7 @@ blockquote {
   position: relative;
   z-index: 1;
   display: flex;
+  height: var(--timeline-copy-height, auto);
   min-height: clamp(128px, 12vh, 166px);
   flex-direction: column;
   justify-content: flex-start;
@@ -1623,6 +1643,7 @@ blockquote {
   box-shadow: none;
   opacity: 0.72;
   cursor: pointer;
+  touch-action: pan-x;
   transform: translateY(8px);
   transform-origin: center top;
   transition:
@@ -1744,6 +1765,28 @@ blockquote {
   background: #f7f8fa;
 }
 
+.timeline-end-cap {
+  flex: 0 0 var(--timeline-item-width);
+  width: var(--timeline-item-width);
+  padding: calc(var(--timeline-copy-height, clamp(128px, 12vh, 166px)) + 18px) 0 10px;
+}
+
+.timeline-end-cap-card {
+  display: grid;
+  place-items: center;
+  width: calc(100% - clamp(22px, 2.4vw, 34px));
+  aspect-ratio: 16 / 10;
+  margin: 0 auto;
+  border: 1px solid rgba(201, 0, 0, 0.12);
+  background: #ffffff;
+}
+
+.timeline-end-cap-logo {
+  display: block;
+  width: min(72%, 240px);
+  height: 72%;
+  object-fit: contain;
+}
 
 .card-grid {
   display: grid;
@@ -2383,7 +2426,7 @@ blockquote {
   }
 
   .timeline-rail {
-    grid-template-columns: repeat(19, minmax(var(--timeline-item-width), 1fr));
+    grid-template-columns: repeat(20, minmax(var(--timeline-item-width), 1fr));
   }
 
   .timeline-marker {
@@ -2401,6 +2444,9 @@ blockquote {
     padding-right: 18px;
   }
 
+  .timeline-end-cap {
+    padding-top: calc(var(--timeline-copy-height, 118px) + 18px);
+  }
   .footer-main {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

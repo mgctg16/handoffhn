@@ -80,6 +80,9 @@ export function setupTimeline(section) {
   const events = Array.from(section.querySelectorAll(".milestone-event"));
   const markers = Array.from(section.querySelectorAll("[data-timeline-marker]"));
   const cards = Array.from(section.querySelectorAll("[data-timeline-card]"));
+  const copies = events.map((event) => event.querySelector(".milestone-copy")).filter(Boolean);
+  const previousButton = section.querySelector("[data-timeline-prev]");
+  const nextButton = section.querySelector("[data-timeline-next]");
   const progressFill = section.querySelector("[data-timeline-progress]");
   const initialYear = section.dataset.initialYear;
   const initialIndex = events.findIndex((event) => event.dataset.year === initialYear);
@@ -148,7 +151,7 @@ export function setupTimeline(section) {
       events[i].removeAttribute("aria-current");
       markers[i]?.classList.remove("is-active", "is-current");
       markers[i]?.removeAttribute("aria-current");
-      if (distance < closestDistance) {
+      if (distance <= closestDistance) {
         closestDistance = distance;
         activeIndex = i;
       }
@@ -179,7 +182,7 @@ export function setupTimeline(section) {
     let closestDistance = Number.POSITIVE_INFINITY;
     for (let i = 0; i < ratios.length; i += 1) {
       const distance = Math.abs(currentProgress - ratios[i]);
-      if (distance < closestDistance) {
+      if (distance <= closestDistance) {
         closestDistance = distance;
         index = i;
       }
@@ -321,7 +324,16 @@ export function setupTimeline(section) {
     }
   }
 
+  function syncCopyHeight() {
+    section.style.removeProperty("--timeline-copy-height");
+    const tallestCopy = copies.reduce((height, copy) => Math.max(height, copy.scrollHeight), 0);
+    if (tallestCopy > 0) {
+      section.style.setProperty("--timeline-copy-height", `${Math.ceil(tallestCopy)}px`);
+    }
+  }
+
   function build() {
+    syncCopyHeight();
     canvas.style.transform = "";
     const distance = maxScroll();
     const hasOverflow = distance > 0;
@@ -341,10 +353,12 @@ export function setupTimeline(section) {
   }
 
   function onResize() {
+    cancelScrollAnimation();
     build();
   }
 
   function onMotionChange() {
+    cancelScrollAnimation();
     build();
     scheduleAutoplay();
   }
@@ -389,6 +403,14 @@ export function setupTimeline(section) {
 
   function onCardClick(event) {
     navigateManually(cards.indexOf(event.currentTarget), "card");
+  }
+
+  function onPreviousClick() {
+    navigateManually(currentIndex() - 1, "arrow");
+  }
+
+  function onNextClick() {
+    navigateManually(currentIndex() + 1, "arrow");
   }
 
   function onViewportKeyDown(event) {
@@ -504,6 +526,8 @@ export function setupTimeline(section) {
   cards.forEach((card) => {
     card.addEventListener("click", onCardClick);
   });
+  previousButton?.addEventListener("click", onPreviousClick);
+  nextButton?.addEventListener("click", onNextClick);
   if (typeof reduceMotion.addEventListener === "function") {
     reduceMotion.addEventListener("change", onMotionChange);
   } else if (typeof reduceMotion.addListener === "function") {
@@ -531,6 +555,8 @@ export function setupTimeline(section) {
     cards.forEach((card) => {
       card.removeEventListener("click", onCardClick);
     });
+    previousButton?.removeEventListener("click", onPreviousClick);
+    nextButton?.removeEventListener("click", onNextClick);
     if (typeof reduceMotion.removeEventListener === "function") {
       reduceMotion.removeEventListener("change", onMotionChange);
     } else if (typeof reduceMotion.removeListener === "function") {

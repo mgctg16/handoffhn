@@ -19,12 +19,16 @@ const milestoneControlLabels = {
   vi: {
     headingLines: ["NHỮNG CỘT MỐC", "ĐÁNG NHỚ"],
     gradientLine: 1,
-    gestureHint: "Kéo hoặc vuốt để khám phá"
+    gestureHint: "Kéo hoặc vuốt để khám phá",
+    previous: "Cột mốc trước",
+    next: "Cột mốc tiếp theo"
   },
   en: {
     headingLines: ["MEMORABLE", "MILESTONES"],
     gradientLine: 1,
-    gestureHint: "Drag or swipe to explore"
+    gestureHint: "Drag or swipe to explore",
+    previous: "Previous milestone",
+    next: "Next milestone"
   }
 };
 const footerLabels = {
@@ -259,6 +263,9 @@ function renderAppreciation(section, activeLang) {
     .filter((paragraph) => String(paragraph || "").trim())
     .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
     .join("");
+  const closingHtml = section.closing
+    ? `<p class="letter-closing">${escapeHtml(section.closing)}</p>`
+    : "";
   const signatureLines = [
     section.signatureName || "",
     section.signatureTitle || section.nameTitle || "",
@@ -287,6 +294,7 @@ function renderAppreciation(section, activeLang) {
           ${section.salutation ? `<p class="letter-salutation">${escapeHtml(section.salutation)}</p>` : ""}
           ${bodyHtml}
         </div>
+        ${closingHtml}
         <p class="person-line">${signatureHtml}</p>
       </div>
     </section>
@@ -373,6 +381,16 @@ function renderMilestones(section, activeLang) {
       <p class="timeline-intro-small">${escapeHtml(section.subtext || "")}</p>
     </div>
   `;
+  const controls = `
+    <div class="timeline-controls" aria-label="Timeline controls">
+      <button class="timeline-arrow timeline-arrow-prev" type="button" data-timeline-prev aria-label="${escapeHtml(labels.previous)}">
+        <span class="sr-only">${escapeHtml(labels.previous)}</span>
+      </button>
+      <button class="timeline-arrow timeline-arrow-next" type="button" data-timeline-next aria-label="${escapeHtml(labels.next)}">
+        <span class="sr-only">${escapeHtml(labels.next)}</span>
+      </button>
+    </div>
+  `;
   const markers = section.items
     .map((item) => `
       <button class="timeline-marker" type="button" data-timeline-marker data-year="${escapeHtml(item.year)}" aria-label="${escapeHtml(item.year)}">
@@ -381,6 +399,14 @@ function renderMilestones(section, activeLang) {
       </button>
     `)
     .join("");
+  const endCapLabel = activeLang === "vi" ? "Kỷ niệm 30 năm" : "30th anniversary";
+  const endCap = `
+    <aside class="timeline-end-cap" aria-label="${escapeHtml(endCapLabel)}">
+      <figure class="timeline-end-cap-card">
+        <img class="timeline-end-cap-logo" src="src/a30new.svg" alt="${escapeHtml(endCapLabel)}" loading="lazy">
+      </figure>
+    </aside>
+  `;
   const items = section.items
     .map((item) => {
       const hasImage = hasSafeUrl(item.imageUrl, { allowHash: false });
@@ -421,9 +447,10 @@ function renderMilestones(section, activeLang) {
           aria-describedby="timeline-gesture-hint"
         >
           <div class="timeline-track">
-            <div class="timeline-rail" aria-hidden="true">${markers}</div>
+            <div class="timeline-rail" aria-hidden="true">${markers}<span class="timeline-marker-end-cap"></span></div>
             <div class="timeline-canvas">
               ${items}
+              ${endCap}
             </div>
           </div>
         </div>
@@ -434,6 +461,7 @@ function renderMilestones(section, activeLang) {
         <div class="timeline-progress">
           <div class="timeline-progress-fill" data-timeline-progress role="progressbar" aria-label="Timeline scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
+        ${controls}
       </div>
     </section>
   `;
