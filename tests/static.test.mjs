@@ -401,7 +401,7 @@ test("rendered milestones expose unpinned horizontal timeline", async () => {
 
   assert.match(html, /class="timeline-header"/);
   assert.doesNotMatch(html, /timeline-intro-mark/);
-  assert.match(html, /class="timeline-viewport" tabindex="0"/);
+  assert.match(html, /class="timeline-viewport"\s+tabindex="0"/);
   assert.match(html, /class="timeline-rail"/);
   assert.match(html, /data-timeline-marker data-year="1995"/);
   assert.match(html, /class="timeline-dot"/);
@@ -410,6 +410,26 @@ test("rendered milestones expose unpinned horizontal timeline", async () => {
   assert.doesNotMatch(html, /data-timeline-prev/);
   assert.doesNotMatch(html, /data-timeline-next/);
   assert.match(html, /class="timeline-progress"/);
+});
+
+test("rendered milestones explain gesture navigation and keep progress passive", async () => {
+  const [{ content }, { renderPage }] = await Promise.all([
+    import("../src/content.js"),
+    import("../src/render.js")
+  ]);
+
+  const vi = renderPage(content.vi, "vi");
+  const en = renderPage(content.en, "en");
+
+  assert.match(vi, /aria-describedby="timeline-gesture-hint"/);
+  assert.match(
+    vi,
+    /id="timeline-gesture-hint" class="timeline-gesture-hint"[\s\S]*Kéo hoặc vuốt để khám phá/
+  );
+  assert.match(en, /Drag or swipe to explore/);
+  assert.match(vi, /class="timeline-progress"/);
+  assert.doesNotMatch(vi, /timeline-progress[^>]*(button|slider|tabindex)/);
+  assert.doesNotMatch(vi, /data-timeline-prev|data-timeline-next/);
 });
 
 test("rendered milestones use coded reference-style timeline structure", async () => {

@@ -19,16 +19,12 @@ const milestoneControlLabels = {
   vi: {
     headingLines: ["NHỮNG CỘT MỐC", "ĐÁNG NHỚ"],
     gradientLine: 1,
-    previous: "Cột mốc trước",
-    next: "Cột mốc tiếp theo",
-    skip: "Đến phần tiếp theo"
+    gestureHint: "Kéo hoặc vuốt để khám phá"
   },
   en: {
     headingLines: ["MEMORABLE", "MILESTONES"],
     gradientLine: 1,
-    previous: "Previous milestone",
-    next: "Next milestone",
-    skip: "Continue"
+    gestureHint: "Drag or swipe to explore"
   }
 };
 const footerLabels = {
@@ -417,7 +413,12 @@ function renderMilestones(section, activeLang) {
     <section class="timeline-section section-pattern" id="milestones" aria-labelledby="milestones-title" data-initial-year="1996">
       ${header}
       <div class="timeline-pin">
-        <div class="timeline-viewport" tabindex="0" aria-label="${escapeHtml(section.heading)}">
+        <div
+          class="timeline-viewport"
+          tabindex="0"
+          aria-label="${escapeHtml(section.heading)}"
+          aria-describedby="timeline-gesture-hint"
+        >
           <div class="timeline-track">
             <div class="timeline-rail" aria-hidden="true">${markers}</div>
             <div class="timeline-canvas">
@@ -425,6 +426,10 @@ function renderMilestones(section, activeLang) {
             </div>
           </div>
         </div>
+        <p id="timeline-gesture-hint" class="timeline-gesture-hint">
+          <span class="timeline-gesture-cue" aria-hidden="true">↔</span>
+          <span>${escapeHtml(labels.gestureHint)}</span>
+        </p>
         <div class="timeline-progress">
           <div class="timeline-progress-fill" data-timeline-progress role="progressbar" aria-label="Timeline scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
