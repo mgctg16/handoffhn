@@ -1173,6 +1173,7 @@ blockquote {
 .timeline-section {
   --milestone-active-scale: 1.2;
   --milestone-enter-x: 12px;
+  --timeline-center-gutter: calc((100vw - var(--timeline-item-width)) / 2);
   position: relative;
   min-height: auto;
   padding: clamp(76px, 9vw, 126px) 0 clamp(64px, 8vw, 104px);
@@ -1397,6 +1398,7 @@ blockquote {
 
 .timeline-rail {
   position: relative;
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(19, minmax(var(--timeline-item-width), 1fr));
   align-items: start;
@@ -1465,6 +1467,7 @@ blockquote {
 
 .timeline-canvas {
   position: relative;
+  box-sizing: border-box;
   display: flex;
   align-items: start;
   gap: 0;
@@ -1646,6 +1649,7 @@ blockquote {
   background: transparent;
   filter: saturate(0.72) contrast(0.96);
   transition: filter 420ms ease, opacity 320ms ease;
+  -webkit-user-drag: none;
 }
 
 .milestone-event.is-entering .milestone-copy {
