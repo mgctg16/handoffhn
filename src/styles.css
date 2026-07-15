@@ -1323,7 +1323,8 @@ blockquote {
   cursor: grabbing;
 }
 
-.timeline-viewport.is-dragging {
+.timeline-viewport.is-dragging,
+.timeline-viewport.is-settling {
   scroll-snap-type: none;
 }
 

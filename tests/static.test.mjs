@@ -464,6 +464,9 @@ test("timeline motion stays gesture-first, subtle, and reduced-motion safe", () 
   assert.match(js, /timelineDirection/);
   assert.match(js, /is-entering/);
   assert.match(js, /is-advancing/);
+  assert.match(css, /\.timeline-viewport\.is-settling/);
+  assert.match(js, /classList\.add\("is-settling"\)/);
+  assert.match(js, /classList\.remove\("is-settling"\)/);
   assert.doesNotMatch(css, /spotlight|cursor-follow|perspective\(/i);
   assert.match(
     css,

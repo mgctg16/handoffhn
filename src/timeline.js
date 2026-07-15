@@ -183,17 +183,23 @@ export function setupTimeline(section) {
 
   function cancelScrollAnimation() {
     if (!scrollAnimation) {
+      viewport.classList.remove("is-settling");
       return;
     }
     window.cancelAnimationFrame(scrollAnimation.id);
     scrollAnimation.resolve(false);
     scrollAnimation = null;
+    viewport.classList.remove("is-settling");
   }
 
   function animateScrollTo(targetLeft, options = {}) {
     cancelScrollAnimation();
+    const shouldSettle = !options.immediate && !reduceMotion.matches;
+    if (shouldSettle) {
+      viewport.classList.add("is-settling");
+    }
     const clampedTarget = Math.min(maxScroll(), Math.max(0, targetLeft));
-    if (options.immediate || reduceMotion.matches) {
+    if (!shouldSettle) {
       viewport.scrollLeft = clampedTarget;
       applyProgress(currentScrollProgress(), ratios);
       return Promise.resolve(true);
@@ -215,6 +221,7 @@ export function setupTimeline(section) {
         scrollAnimation = null;
         viewport.scrollLeft = clampedTarget;
         applyProgress(currentScrollProgress(), ratios);
+        viewport.classList.remove("is-settling");
         resolve(true);
       }
 
@@ -399,6 +406,9 @@ export function setupTimeline(section) {
     const moved = dragHasMoved;
     isDragging = false;
     dragHasMoved = false;
+    if (moved && !reduceMotion.matches) {
+      viewport.classList.add("is-settling");
+    }
     viewport.classList.remove("is-dragging");
     if (viewport.hasPointerCapture?.(event.pointerId)) {
       viewport.releasePointerCapture(event.pointerId);
