@@ -247,6 +247,13 @@ test("timeline supports drag scrolling without active text reflow", () => {
   assert.doesNotMatch(timeline, /classList\.toggle\("is-active", reached\)/);
   assert.match(styles, /\.timeline-viewport\.is-dragging/);
   assert.match(styles, /\.timeline-viewport\.is-dragging \{[\s\S]*scroll-snap-type:\s*none/);
+  assert.match(timeline, /addEventListener\("keydown", onViewportKeyDown\)/);
+  assert.match(timeline, /resolveTimelineKey\(/);
+  assert.match(timeline, /TIMELINE_INTERACTION_RESUME_MS/);
+  assert.match(timeline, /classList\.add\("has-interacted"\)/);
+  assert.match(timeline, /classList\.toggle\("can-scroll-left"/);
+  assert.match(timeline, /classList\.toggle\("can-scroll-right"/);
+  assert.match(timeline, /goToIndex\(currentIndex\(\), \{ source: "drag" \}\)/);
 
   const currentYearBlock = styles.match(/\.timeline-marker\.is-current \.timeline-marker-year \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(currentYearBlock, /color:\s*var\(--hino-red\)/);

@@ -267,19 +267,18 @@ export function setupTimeline(section) {
 
   function build() {
     canvas.style.transform = "";
-    events.forEach((event) => {
-      event.classList.remove("is-active", "is-current");
-      event.removeAttribute("aria-current");
-    });
-    markers.forEach((marker) => {
-      marker.classList.remove("is-active", "is-current");
-      marker.removeAttribute("aria-current");
-    });
-
     const distance = maxScroll();
+    const hasOverflow = distance > 0;
     ratios = eventCenterRatios(distance);
-    autoplayEnabled = !reduceMotion.matches && events.length > 1 && distance > 0;
+    autoplayEnabled = !reduceMotion.matches && events.length > 1 && hasOverflow;
     applyProgress(currentScrollProgress(), ratios);
+    updateEdgeState();
+    section.classList.toggle("is-static-timeline", !hasOverflow);
+    if (!hasOverflow || section.classList.contains("has-interacted")) {
+      viewport.removeAttribute("aria-describedby");
+    } else {
+      viewport.setAttribute("aria-describedby", "timeline-gesture-hint");
+    }
     if (!autoplayEnabled) {
       autoplay.cancel();
     }
@@ -296,12 +295,49 @@ export function setupTimeline(section) {
 
   function onViewportScroll() {
     applyProgress(currentScrollProgress(), ratios);
+    updateEdgeState();
   }
 
-  async function onMarkerClick(event) {
-    autoplay.cancel();
-    await goToIndex(markers.indexOf(event.currentTarget), { source: "marker" });
+  function dismissGestureHint() {
+    if (section.classList.contains("has-interacted")) {
+      return;
+    }
+    section.classList.add("has-interacted");
+    viewport.removeAttribute("aria-describedby");
+  }
+
+  function updateEdgeState() {
+    const state = getTimelineEdgeState(viewport.scrollLeft, maxScroll());
+    section.classList.toggle("can-scroll-left", state.canScrollLeft);
+    section.classList.toggle("can-scroll-right", state.canScrollRight);
+    section.classList.toggle(
+      "has-timeline-overflow",
+      state.canScrollLeft || state.canScrollRight
+    );
+  }
+
+  function resumeAfterInteraction() {
     scheduleAutoplay(TIMELINE_INTERACTION_RESUME_MS);
+  }
+
+  async function navigateManually(index, source) {
+    autoplay.cancel();
+    dismissGestureHint();
+    await goToIndex(index, { source });
+    resumeAfterInteraction();
+  }
+
+  function onMarkerClick(event) {
+    navigateManually(markers.indexOf(event.currentTarget), "marker");
+  }
+
+  function onViewportKeyDown(event) {
+    const targetIndex = resolveTimelineKey(event.key, currentIndex(), events.length - 1);
+    if (targetIndex === null) {
+      return;
+    }
+    event.preventDefault();
+    navigateManually(targetIndex, "keyboard");
   }
 
   function onPointerDown(event) {
@@ -324,9 +360,10 @@ export function setupTimeline(section) {
     event.preventDefault();
     viewport.scrollLeft = dragStartScrollLeft - (event.clientX - dragStartX);
     applyProgress(currentScrollProgress(), ratios);
+    updateEdgeState();
   }
 
-  function stopDragging(event) {
+  async function stopDragging(event) {
     if (!isDragging) {
       return;
     }
@@ -335,7 +372,12 @@ export function setupTimeline(section) {
     if (viewport.hasPointerCapture?.(event.pointerId)) {
       viewport.releasePointerCapture(event.pointerId);
     }
-    scheduleAutoplay(TIMELINE_INTERACTION_RESUME_MS);
+    const moved = Math.abs(viewport.scrollLeft - dragStartScrollLeft) > 6;
+    if (moved) {
+      dismissGestureHint();
+    }
+    await goToIndex(currentIndex(), { source: "drag" });
+    resumeAfterInteraction();
   }
 
   function onVisibilityChange() {
@@ -352,7 +394,8 @@ export function setupTimeline(section) {
     }
     autoplay.cancel();
     cancelScrollAnimation();
-    scheduleAutoplay(TIMELINE_INTERACTION_RESUME_MS);
+    dismissGestureHint();
+    resumeAfterInteraction();
   }
 
   const visibilityObserver = new IntersectionObserver((entries) => {
@@ -373,6 +416,7 @@ export function setupTimeline(section) {
 
   viewport.addEventListener("scroll", onViewportScroll, { passive: true });
   viewport.addEventListener("wheel", onViewportWheel, { passive: true });
+  viewport.addEventListener("keydown", onViewportKeyDown);
   viewport.addEventListener("pointerdown", onPointerDown);
   viewport.addEventListener("pointermove", onPointerMove);
   viewport.addEventListener("pointerup", stopDragging);
@@ -395,6 +439,7 @@ export function setupTimeline(section) {
     visibilityObserver.disconnect();
     viewport.removeEventListener("scroll", onViewportScroll);
     viewport.removeEventListener("wheel", onViewportWheel);
+    viewport.removeEventListener("keydown", onViewportKeyDown);
     viewport.removeEventListener("pointerdown", onPointerDown);
     viewport.removeEventListener("pointermove", onPointerMove);
     viewport.removeEventListener("pointerup", stopDragging);
