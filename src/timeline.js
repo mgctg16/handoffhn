@@ -86,6 +86,7 @@ export function setupTimeline(section) {
   let autoplayEnabled = false;
   let navigationToken = 0;
   let scrollAnimation = null;
+  let motionTimerId = null;
   let dragStartX = 0;
   let dragStartScrollLeft = 0;
 
@@ -219,6 +220,21 @@ export function setupTimeline(section) {
     });
   }
 
+  function markEntering(index, direction, source) {
+    events.forEach((event) => event.classList.remove("is-entering"));
+    markers.forEach((marker) => marker.classList.remove("is-entering"));
+    section.dataset.timelineDirection = direction;
+    events[index]?.classList.add("is-entering");
+    markers[index]?.classList.add("is-entering");
+    section.classList.toggle("is-advancing", source === "autoplay");
+    window.clearTimeout(motionTimerId);
+    motionTimerId = window.setTimeout(() => {
+      events[index]?.classList.remove("is-entering");
+      markers[index]?.classList.remove("is-entering");
+      section.classList.remove("is-advancing");
+    }, TIMELINE_SCROLL_DURATION_MS);
+  }
+
   async function goToIndex(index, options = {}) {
     if (!ratios.length) {
       return false;
@@ -229,8 +245,8 @@ export function setupTimeline(section) {
     const safeIndex = Math.min(events.length - 1, Math.max(0, index));
     const fromIndex = currentIndex();
     const direction = options.direction || (safeIndex >= fromIndex ? "forward" : "backward");
-    section.dataset.timelineDirection = direction;
     const targetLeft = targetLeftForEvent(events[safeIndex]);
+    markEntering(safeIndex, direction, options.source);
     const completed = await animateScrollTo(targetLeft, options);
     if (!completed || token !== navigationToken) {
       return false;
@@ -436,6 +452,7 @@ export function setupTimeline(section) {
   return () => {
     autoplay.cancel();
     cancelScrollAnimation();
+    window.clearTimeout(motionTimerId);
     visibilityObserver.disconnect();
     viewport.removeEventListener("scroll", onViewportScroll);
     viewport.removeEventListener("wheel", onViewportWheel);

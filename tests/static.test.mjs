@@ -267,7 +267,8 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   const currentCardBlock = styles.match(/\.milestone-event\.is-current \.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(currentCardBlock, /box-shadow:/);
-  assert.match(currentCardBlock, /translateY\(0\) scale\(1\.2\)/);
+  assert.match(currentCardBlock, /translateY\(0\) scale\(var\(--milestone-active-scale\)\)/);
+  assert.match(styles, /\.timeline-section\s*\{[^}]*--milestone-active-scale:\s*1\.2/s);
 
   const cardBlock = styles.match(/\.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(cardBlock, /margin:\s*18px auto 0/);
@@ -275,7 +276,7 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   assert.match(
     styles,
-    /@media \(max-width: 900px\) \{[\s\S]*?\.milestone-event\.is-current \.milestone-card\s*\{[^}]*transform:\s*translateY\(0\) scale\(1\.15\)/s
+    /@media \(max-width: 900px\) \{[\s\S]*?\.timeline-section\s*\{[^}]*--milestone-active-scale:\s*1\.15/s
   );
 
   const railBlock = styles.match(/\.timeline-rail \{[\s\S]*?\n\}/)?.[0] || "";
@@ -437,6 +438,29 @@ test("rendered milestones explain gesture navigation and keep progress passive",
   assert.match(vi, /class="timeline-progress"/);
   assert.doesNotMatch(vi, /timeline-progress[^>]*(button|slider|tabindex)/);
   assert.doesNotMatch(vi, /data-timeline-prev|data-timeline-next/);
+});
+
+test("timeline motion stays gesture-first, subtle, and reduced-motion safe", () => {
+  const css = file("src/styles.css");
+  const js = file("src/timeline.js");
+
+  assert.match(css, /\.timeline-gesture-hint\s*\{/);
+  assert.match(css, /\.timeline-pin::before/);
+  assert.match(css, /\.timeline-pin::after/);
+  assert.match(css, /\.can-scroll-left/);
+  assert.match(css, /\.can-scroll-right/);
+  assert.match(css, /@keyframes milestoneEnter/);
+  assert.match(css, /@keyframes timelineDotPulse/);
+  assert.match(css, /@keyframes timelineProgressGlint/);
+  assert.match(css, /filter:\s*saturate\(0\.72\)/);
+  assert.match(js, /timelineDirection/);
+  assert.match(js, /is-entering/);
+  assert.match(js, /is-advancing/);
+  assert.doesNotMatch(css, /spotlight|cursor-follow|perspective\(/i);
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.timeline-progress-fill::after[\s\S]*display:\s*none/s
+  );
 });
 
 test("rendered milestones use coded reference-style timeline structure", async () => {
