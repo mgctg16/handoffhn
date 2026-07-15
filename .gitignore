@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# Isolated feature worktrees
+.worktrees/
+
 # OS files
 .DS_Store
 **/.DS_Store
