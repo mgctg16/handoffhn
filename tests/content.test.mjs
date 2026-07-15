@@ -76,7 +76,7 @@ const expectedViMilestones = [
   ["2023", "Kỷ niệm chiếc xe thứ 50.000 được sản xuất"],
   ["2024", "Xuất xưởng xe XZU Euro5"],
   ["2025", "Bàn giao xe tải thứ 60.000 tại Việt Nam"],
-  ["2026", "Kỷ niệm 30 năm thành lập Hino Motors Việt Nam"]
+  ["2026", "Khai trương văn phòng mới tại Hà Nội"]
 ];
 
 const expectedEnMilestones = [
@@ -98,7 +98,7 @@ const expectedEnMilestones = [
   ["2023", "Celebrated the 50,000th vehicle produced"],
   ["2024", "Rolled out XZU Euro5 vehicle"],
   ["2025", "Delivered the 60,000th truck in Vietnam"],
-  ["2026", "Celebrating the 30th anniversary of Hino Motors Vietnam"]
+  ["2026", "Hanoi New Office Grand Opening Ceremony"]
 ];
 
 const expectedMilestoneImageUrls = {
@@ -120,11 +120,11 @@ const expectedMilestoneImageUrls = {
   2023: "src/assets/milestone-2023.jpg",
   2024: "src/assets/milestone-2024.jpg",
   2025: "src/assets/milestone-2025.jpg",
-  2026: "src/a30new.svg"
+  2026: "src/assets/milestone-2026-new-office.jpg"
 };
 
 const expectedMilestoneImageAlts = {
-  2026: "A30 anniversary logo"
+  2026: "Hanoi new office grand opening ceremony"
 };
 
 function expectedMilestones(rows) {
@@ -161,12 +161,12 @@ const expectedViSections = {
     heading: "NHỮNG CON SỐ ẤN TƯỢNG",
     note: "*Số liệu cập nhật đến ngày 18/06/2026",
     items: [
-      { value: 371, suffix: "", unit: "Nhân viên", label: "Nhân sự Hino Motors Việt Nam" },
-      { value: 22, suffix: "", unit: "Đại lý", label: "Hệ thống đại lý chính hãng" },
-      { value: 58777, suffix: "", unit: "Xe", label: "Sản lượng xe xuất xưởng" },
-      { value: 63954, suffix: "", unit: "Xe", label: "Sản lượng xe bán ra" },
-      { value: 2682710, suffix: "", unit: "Triệu đồng", label: "Doanh thu phụ tùng" },
-      { value: 831809, suffix: "", unit: "Lượt", label: "Dịch vụ bảo dưỡng" }
+      { value: 371, suffix: "", unit: "Nhân viên", label: "Nhân sự Hino Motors Việt Nam", disclaimer: "Tại thời điểm tháng 6/2026" },
+      { value: 1295, suffix: "", unit: "Nhân viên", label: "Nhân sự đại lý Hino tại Việt Nam", disclaimer: "Tại thời điểm tháng 6/2026" },
+      { value: 58777, suffix: "", unit: "Xe", label: "Sản lượng xe xuất xưởng", disclaimer: "Lũy kế từ 1996 đến 6/2026" },
+      { value: 63954, suffix: "", unit: "Xe", label: "Sản lượng xe bán ra", disclaimer: "Lũy kế năm tài chính 1996–2025" },
+      { value: 2682710, suffix: "", unit: "Triệu đồng", label: "Doanh thu phụ tùng", disclaimer: "Lũy kế năm tài chính 1996–2025" },
+      { value: 831809, suffix: "", unit: "Lượt", label: "Dịch vụ bảo dưỡng CPUS", disclaimer: "Lũy kế năm tài chính 1996–2025" }
     ]
   },
   video: {
@@ -194,7 +194,7 @@ const expectedViSections = {
   profile: {
     heading: "VỀ HINO MOTORS VIỆT NAM",
     subtext: "Khám phá sâu hơn về hành trình phát triển của Hino Motors Việt Nam, những giá trị cốt lõi và nền tảng tạo nên chúng tôi ngày hôm nay.",
-    cta: "KỶ YẾU 30 NĂM"
+    cta: "ẤN PHẨM 30 NĂM"
   },
   contact: {
     heading: "Liên hệ",
@@ -239,12 +239,12 @@ const expectedEnSections = {
     heading: "OUTSTANDING STATISTICS",
     note: "*Data updated as of June 18, 2026",
     items: [
-      { value: 371, suffix: "", unit: "Employees", label: "Hino Motors Vietnam Employees" },
-      { value: 22, suffix: "", unit: "Dealers", label: "Authorized Dealer" },
-      { value: 58777, suffix: "", unit: "Vehicles", label: "Vehicles Produced" },
-      { value: 63954, suffix: "", unit: "Vehicles", label: "Vehicles Sold" },
-      { value: 2682710, suffix: "", unit: "Million VND", label: "Parts Revenue" },
-      { value: 831809, suffix: "", unit: "Visits", label: "Maintenance Services" }
+      { value: 371, suffix: "", unit: "Employees", label: "Hino Motors Vietnam Employees", disclaimer: "As of June 2026" },
+      { value: 1295, suffix: "", unit: "Employees", label: "Dealer Employees in Vietnam", disclaimer: "As of June 2026" },
+      { value: 58777, suffix: "", unit: "Vehicles", label: "Vehicles Produced", disclaimer: "Accumulative 1996–Jun 2026" },
+      { value: 63954, suffix: "", unit: "Vehicles", label: "Vehicles Sold", disclaimer: "Accumulative FY1996–2025" },
+      { value: 2682710, suffix: "", unit: "Million VND", label: "Parts Revenue", disclaimer: "Accumulative FY1996–2025" },
+      { value: 831809, suffix: "", unit: "Visits", label: "Maintenance Services CPUS", disclaimer: "Accumulative FY1996–2025" }
     ]
   },
   video: {
@@ -272,7 +272,7 @@ const expectedEnSections = {
   profile: {
     heading: "ABOUT HINO MOTORS VIETNAM",
     subtext: "Explore further the development journey of Hino Motors Vietnam, the core values and foundations that have shaped who we are today.",
-    cta: "30TH ANNIVERSARY YEARBOOK"
+    cta: "30TH ANNIVERSARY PUBLICATION"
   },
   contact: {
     heading: "Contact",
