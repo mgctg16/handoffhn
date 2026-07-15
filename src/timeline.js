@@ -233,16 +233,20 @@ export function setupTimeline(section) {
     });
   }
 
-  function markEntering(index, direction, source) {
-    events.forEach((event) => event.classList.remove("is-entering"));
+  function markEntering(index, fromIndex, direction, source, shouldAnimateExit) {
+    events.forEach((event) => event.classList.remove("is-entering", "is-leaving"));
     markers.forEach((marker) => marker.classList.remove("is-entering"));
     section.dataset.timelineDirection = direction;
     events[index]?.classList.add("is-entering");
+    if (shouldAnimateExit && fromIndex !== index) {
+      events[fromIndex]?.classList.add("is-leaving");
+    }
     markers[index]?.classList.add("is-entering");
     section.classList.toggle("is-advancing", source === "autoplay");
     window.clearTimeout(motionTimerId);
     motionTimerId = window.setTimeout(() => {
       events[index]?.classList.remove("is-entering");
+      events[fromIndex]?.classList.remove("is-leaving");
       markers[index]?.classList.remove("is-entering");
       section.classList.remove("is-advancing");
     }, TIMELINE_SCROLL_DURATION_MS);
@@ -259,7 +263,13 @@ export function setupTimeline(section) {
     const fromIndex = currentIndex();
     const direction = options.direction || (safeIndex >= fromIndex ? "forward" : "backward");
     const targetLeft = targetLeftForEvent(events[safeIndex]);
-    markEntering(safeIndex, direction, options.source);
+    markEntering(
+      safeIndex,
+      fromIndex,
+      direction,
+      options.source,
+      !options.immediate && !reduceMotion.matches
+    );
     const completed = await animateScrollTo(targetLeft, options);
     if (!completed || token !== navigationToken) {
       return false;
