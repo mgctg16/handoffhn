@@ -64,6 +64,11 @@ export function calculateCenteredTarget(eventOffsetLeft, eventWidth, viewportWid
   return Math.min(upperBound, Math.max(0, centeredTarget));
 }
 
+export function easeTimelineScroll(progress) {
+  const clamped = Math.min(1, Math.max(0, progress));
+  return (1 - Math.cos(Math.PI * clamped)) / 2;
+}
+
 export function setupTimeline(section) {
   if (!section || typeof window === "undefined") {
     return () => {};
@@ -213,8 +218,9 @@ export function setupTimeline(section) {
     return new Promise((resolve) => {
       function tick(now) {
         const progress = Math.min(1, (now - startedAt) / TIMELINE_SCROLL_DURATION_MS);
-        const eased = 1 - Math.pow(1 - progress, 3);
+        const eased = easeTimelineScroll(progress);
         viewport.scrollLeft = startLeft + distance * eased;
+        applyProgress(currentScrollProgress(), ratios);
         if (progress < 1) {
           scrollAnimation.id = window.requestAnimationFrame(tick);
           return;
@@ -233,9 +239,16 @@ export function setupTimeline(section) {
     });
   }
 
-  function markEntering(index, fromIndex, direction, source, shouldAnimateExit) {
+  function clearNavigationMotion() {
     events.forEach((event) => event.classList.remove("is-entering", "is-leaving"));
     markers.forEach((marker) => marker.classList.remove("is-entering"));
+    section.classList.remove("is-advancing");
+    window.clearTimeout(motionTimerId);
+    motionTimerId = null;
+  }
+
+  function markEntering(index, fromIndex, direction, source, shouldAnimateExit) {
+    clearNavigationMotion();
     section.dataset.timelineDirection = direction;
     events[index]?.classList.add("is-entering");
     if (shouldAnimateExit && fromIndex !== index) {
@@ -243,12 +256,12 @@ export function setupTimeline(section) {
     }
     markers[index]?.classList.add("is-entering");
     section.classList.toggle("is-advancing", source === "autoplay");
-    window.clearTimeout(motionTimerId);
     motionTimerId = window.setTimeout(() => {
       events[index]?.classList.remove("is-entering");
       events[fromIndex]?.classList.remove("is-leaving");
       markers[index]?.classList.remove("is-entering");
       section.classList.remove("is-advancing");
+      motionTimerId = null;
     }, TIMELINE_SCROLL_DURATION_MS);
   }
 
@@ -263,13 +276,17 @@ export function setupTimeline(section) {
     const fromIndex = currentIndex();
     const direction = options.direction || (safeIndex >= fromIndex ? "forward" : "backward");
     const targetLeft = targetLeftForEvent(events[safeIndex]);
-    markEntering(
-      safeIndex,
-      fromIndex,
-      direction,
-      options.source,
-      !options.immediate && !reduceMotion.matches
-    );
+    if (options.source === "autoplay") {
+      markEntering(
+        safeIndex,
+        fromIndex,
+        direction,
+        options.source,
+        !options.immediate && !reduceMotion.matches
+      );
+    } else {
+      clearNavigationMotion();
+    }
     const completed = await animateScrollTo(targetLeft, options);
     if (!completed || token !== navigationToken) {
       return false;

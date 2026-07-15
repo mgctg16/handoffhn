@@ -235,6 +235,8 @@ test("timeline supports drag scrolling without active text reflow", () => {
   assert.match(timeline, /addEventListener\("pointerdown", onPointerDown\)/);
   assert.match(timeline, /shouldStartTimelineDrag\(deltaX\)/);
   assert.match(timeline, /viewport\.scrollLeft = dragStartScrollLeft - deltaX/);
+  assert.match(timeline, /const eased = easeTimelineScroll\(progress\)/);
+  assert.match(timeline, /options\.source === "autoplay"/);
   assert.match(
     timeline,
     /calculateCenteredTarget\(\s*event\.offsetLeft,\s*event\.offsetWidth,\s*viewport\.clientWidth,\s*maxScroll\(\)\s*\)/s

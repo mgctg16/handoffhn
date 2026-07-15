@@ -5,6 +5,7 @@ import {
   TIMELINE_INTERACTION_RESUME_MS,
   calculateCenteredTarget,
   createTimelineAutoplayScheduler,
+  easeTimelineScroll,
   getTimelineEdgeState,
   resolveTimelineKey,
   shouldStartTimelineDrag
@@ -25,6 +26,14 @@ test("calculateCenteredTarget centers milestones and clamps both edges", () => {
 test("timeline timing constants match the approved cadence", () => {
   assert.equal(TIMELINE_AUTOPLAY_DWELL_MS, 4500);
   assert.equal(TIMELINE_INTERACTION_RESUME_MS, 3000);
+});
+
+test("timeline click navigation uses smooth scroll interpolation", () => {
+  assert.equal(easeTimelineScroll(-1), 0);
+  assert.equal(easeTimelineScroll(0), 0);
+  assert.ok(Math.abs(easeTimelineScroll(0.5) - 0.5) < Number.EPSILON);
+  assert.equal(easeTimelineScroll(1), 1);
+  assert.equal(easeTimelineScroll(2), 1);
 });
 
 test("createTimelineAutoplayScheduler keeps only one pending timer", () => {
