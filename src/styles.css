@@ -1674,7 +1674,7 @@ blockquote {
 }
 
 .milestone-event.is-leaving .milestone-card {
-  animation: milestoneCardLeave 650ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: milestoneCardLeave 650ms linear both;
 }
 
 .timeline-marker.is-entering .timeline-dot {
