@@ -1,3 +1,59 @@
+export const TIMELINE_AUTOPLAY_DWELL_MS = 4500;
+export const TIMELINE_INTERACTION_RESUME_MS = 3000;
+export const TIMELINE_SCROLL_DURATION_MS = 650;
+
+export function createTimelineAutoplayScheduler({ setTimer, clearTimer, onAdvance }) {
+  let timerId = null;
+
+  function cancel() {
+    if (timerId === null) {
+      return;
+    }
+    clearTimer(timerId);
+    timerId = null;
+  }
+
+  function schedule(delay) {
+    cancel();
+    timerId = setTimer(() => {
+      timerId = null;
+      onAdvance();
+    }, delay);
+  }
+
+  return {
+    schedule,
+    cancel,
+    hasPending: () => timerId !== null
+  };
+}
+
+export function resolveTimelineKey(key, currentIndex, lastIndex) {
+  if (key === "ArrowLeft") {
+    return Math.max(0, currentIndex - 1);
+  }
+  if (key === "ArrowRight") {
+    return Math.min(lastIndex, currentIndex + 1);
+  }
+  if (key === "Home") {
+    return 0;
+  }
+  if (key === "End") {
+    return lastIndex;
+  }
+  return null;
+}
+
+export function getTimelineEdgeState(scrollLeft, maximumScroll, tolerance = 2) {
+  if (maximumScroll <= tolerance) {
+    return { canScrollLeft: false, canScrollRight: false };
+  }
+  return {
+    canScrollLeft: scrollLeft > tolerance,
+    canScrollRight: scrollLeft < maximumScroll - tolerance
+  };
+}
+
 export function calculateCenteredTarget(eventOffsetLeft, eventWidth, viewportWidth, maximumScroll) {
   const upperBound = Math.max(0, maximumScroll);
   const centeredTarget = eventOffsetLeft + eventWidth / 2 - viewportWidth / 2;
