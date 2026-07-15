@@ -308,6 +308,7 @@ function renderStatistics(section, activeLang = "vi") {
       <article class="stat-cell" style="--stat-i:${i}" role="listitem">
         <div class="stat-info">
           <h3 class="stat-label">${escapeHtml(item.label)}</h3>
+          ${item.disclaimer ? `<p class="stat-disclaimer">${escapeHtml(item.disclaimer)}</p>` : ""}
         </div>
         <div class="stat-figure">
           <span
@@ -376,16 +377,6 @@ function renderMilestones(section, activeLang) {
       <p class="timeline-intro-small">${escapeHtml(section.subtext || "")}</p>
     </div>
   `;
-  const controls = `
-    <div class="timeline-controls" aria-label="Timeline controls">
-      <button class="timeline-arrow timeline-arrow-prev" type="button" data-timeline-prev aria-label="${escapeHtml(labels.previous)}">
-        <span class="sr-only">${escapeHtml(labels.previous)}</span>
-      </button>
-      <button class="timeline-arrow timeline-arrow-next" type="button" data-timeline-next aria-label="${escapeHtml(labels.next)}">
-        <span class="sr-only">${escapeHtml(labels.next)}</span>
-      </button>
-    </div>
-  `;
   const markers = section.items
     .map((item) => `
       <button class="timeline-marker" type="button" data-timeline-marker data-year="${escapeHtml(item.year)}" aria-label="${escapeHtml(item.year)}">
@@ -397,9 +388,7 @@ function renderMilestones(section, activeLang) {
   const items = section.items
     .map((item) => {
       const hasImage = hasSafeUrl(item.imageUrl, { allowHash: false });
-      const isAnniversaryMilestone = item.year === "2026";
-      const eventClass = `milestone-event milestone-year-${escapeHtml(item.year)}${isAnniversaryMilestone ? " is-anniversary" : ""}`;
-      const imageClass = `milestone-image${isAnniversaryMilestone ? " milestone-image-anniversary" : ""}`;
+      const eventClass = `milestone-event milestone-year-${escapeHtml(item.year)}`;
       const eventParts = String(item.text || "")
         .split("/")
         .map((part) => part.trim())
@@ -408,7 +397,7 @@ function renderMilestones(section, activeLang) {
         ? `<ul class="milestone-title milestone-list">${eventParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`
         : `<h3 class="milestone-title">${escapeHtml(eventParts[0] || item.text)}</h3>`;
       const image = hasImage
-        ? `<img class="${imageClass}" src="${safeUrl(item.imageUrl, "", { allowHash: false })}" alt="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}" loading="lazy">`
+        ? `<img class="milestone-image" src="${safeUrl(item.imageUrl, "", { allowHash: false })}" alt="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}" loading="lazy">`
         : `<div class="milestone-image milestone-image-placeholder" role="img" aria-label="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}"></div>`;
 
       return `
@@ -425,7 +414,7 @@ function renderMilestones(section, activeLang) {
     .join("");
 
   return `
-    <section class="timeline-section section-pattern" id="milestones" aria-labelledby="milestones-title">
+    <section class="timeline-section section-pattern" id="milestones" aria-labelledby="milestones-title" data-initial-year="1996">
       ${header}
       <div class="timeline-pin">
         <div class="timeline-viewport" tabindex="0" aria-label="${escapeHtml(section.heading)}">
@@ -439,7 +428,6 @@ function renderMilestones(section, activeLang) {
         <div class="timeline-progress">
           <div class="timeline-progress-fill" data-timeline-progress role="progressbar" aria-label="Timeline scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
-        ${controls}
       </div>
     </section>
   `;

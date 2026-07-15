@@ -50,7 +50,8 @@ test("project shell files exist", () => {
     "src/assets/milestone-2022.png",
     "src/assets/milestone-2023.jpg",
     "src/assets/milestone-2024.jpg",
-    "src/assets/milestone-2025.jpg"
+    "src/assets/milestone-2025.jpg",
+    "src/assets/milestone-2026-new-office.jpg"
   ].forEach((path) => {
     assert.equal(existsSync(join(root, path)), true, `${path} should exist`);
   });
@@ -214,13 +215,16 @@ test("rendered statistics expose animated numeric counters", async () => {
   const html = renderPage(content.vi, "vi");
 
   assert.match(html, /class="stat-number stat-number--short"[\s\S]*data-count-to="371"/);
-  assert.match(html, /data-count-to="22"[\s\S]*data-count-suffix=""/);
+  assert.match(html, /data-count-to="1295"[\s\S]*data-count-suffix=""/);
   assert.match(html, /class="stat-number stat-number--long"[\s\S]*data-count-to="2682710"[\s\S]*data-count-suffix=""/);
   assert.match(html, /class="stat-number stat-number--wide"[\s\S]*data-count-to="831809"/);
   assert.match(html, /class="stat-unit">Nhân viên<\/p>/);
+  assert.match(html, /class="stat-label">Nhân sự đại lý Hino tại Việt Nam<\/h3>/);
+  assert.match(html, /class="stat-disclaimer">Tại thời điểm tháng 6\/2026<\/p>/);
+  assert.match(html, /class="stat-label">Dịch vụ bảo dưỡng CPUS<\/h3>/);
   assert.match(html, /class="stats-note">\*Số liệu cập nhật đến ngày 18\/06\/2026<\/p>/);
   assert.doesNotMatch(html, /class="stat-hex"/);
-  assert.doesNotMatch(html, /Đại lý Hino tại Việt Nam/);
+  assert.doesNotMatch(html, /Hệ thống đại lý chính hãng/);
 });
 
 
@@ -256,7 +260,7 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   const currentCardBlock = styles.match(/\.milestone-event\.is-current \.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(currentCardBlock, /box-shadow:/);
-  assert.match(currentCardBlock, /translateY\(0\) scale\(1\.08\)/);
+  assert.match(currentCardBlock, /translateY\(0\) scale\(1\.2\)/);
 
   const cardBlock = styles.match(/\.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(cardBlock, /margin:\s*18px auto 0/);
@@ -264,7 +268,7 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   assert.match(
     styles,
-    /@media \(max-width: 900px\) \{[\s\S]*?\.milestone-event\.is-current \.milestone-card\s*\{[^}]*transform:\s*translateY\(0\) scale\(1\.04\)/s
+    /@media \(max-width: 900px\) \{[\s\S]*?\.milestone-event\.is-current \.milestone-card\s*\{[^}]*transform:\s*translateY\(0\) scale\(1\.15\)/s
   );
 
   const railBlock = styles.match(/\.timeline-rail \{[\s\S]*?\n\}/)?.[0] || "";
@@ -384,7 +388,7 @@ test("rendered news and milestones use real local images", async () => {
   assert.match(html, /<figure class="card-media"><img class="card-image" src="src\/assets\/news-vilog-2025\.jpg" alt="Recap sự kiện kỷ niệm 30 năm Hino Motors Việt Nam" loading="lazy"><\/figure>/);
   assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-1995\.jpg" alt="1995 milestone image" loading="lazy">/);
   assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-2025\.jpg" alt="2025 milestone image" loading="lazy">/);
-  assert.match(html, /<img class="milestone-image milestone-image-anniversary" src="src\/a30new\.svg" alt="A30 anniversary logo" loading="lazy">/);
+  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-2026-new-office\.jpg" alt="Hanoi new office grand opening ceremony" loading="lazy">/);
 });
 
 test("rendered milestones expose unpinned horizontal timeline", async () => {
@@ -402,8 +406,9 @@ test("rendered milestones expose unpinned horizontal timeline", async () => {
   assert.match(html, /data-timeline-marker data-year="1995"/);
   assert.match(html, /class="timeline-dot"/);
   assert.match(html, /class="timeline-marker-year">2026<\/span>/);
-  assert.match(html, /data-timeline-prev/);
-  assert.match(html, /data-timeline-next/);
+  assert.match(html, /data-initial-year="1996"/);
+  assert.doesNotMatch(html, /data-timeline-prev/);
+  assert.doesNotMatch(html, /data-timeline-next/);
   assert.match(html, /class="timeline-progress"/);
 });
 
@@ -425,8 +430,8 @@ test("rendered milestones use coded reference-style timeline structure", async (
   assert.doesNotMatch(html, /class="milestone-date"/);
   assert.match(html, /class="milestone-title">Mở văn phòng đại diện tại Hà Nội<\/h3>/);
   assert.match(html, /class="milestone-title milestone-list"><li>Khai trương đại lý Hino Sao Bắc \(Hà Nội\)<\/li><li>Khai trương đại lý Hino Lexim \(Hà Nội\)<\/li><li>Kỷ niệm 10 năm thành lập<\/li><\/ul>/);
-  assert.match(html, /class="milestone-event milestone-year-2026 is-anniversary"/);
-  assert.match(html, /class="milestone-image milestone-image-anniversary"/);
+  assert.match(html, /class="milestone-event milestone-year-2026"/);
+  assert.match(html, /Khai trương văn phòng mới tại Hà Nội/);
   assert.doesNotMatch(html, /class="timeline-intro-panel"/);
   assert.doesNotMatch(html, /class="milestone-stem"/);
   assert.doesNotMatch(html, /class="milestone-node"/);
@@ -441,10 +446,9 @@ test("rendered milestones use coded reference-style timeline structure", async (
   assert.doesNotMatch(css, /\.timeline-intro-panel\s*\{/);
   assert.doesNotMatch(css, /\.milestone-index\s*\{/);
   assert.match(css, /\.milestone-image\s*\{[^}]*object-fit:\s*cover/s);
-  assert.match(css, /\.milestone-image-anniversary\s*\{[^}]*object-fit:\s*contain/s);
+  assert.doesNotMatch(css, /\.milestone-image-anniversary\s*\{/);
   assert.match(css, /\.milestone-event\.is-current/);
   assert.match(css, /\.timeline-marker\.is-active/);
-  assert.match(css, /\.milestone-image-anniversary/);
 });
 
 test("rendered page avoids design-slop placeholders and preserves the supplied banner artwork", async () => {

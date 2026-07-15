@@ -1010,13 +1010,13 @@ blockquote {
 .stat-cell {
   position: relative;
   display: grid;
-  grid-template-rows: minmax(3.1em, auto) minmax(4.9em, auto);
+  grid-template-rows: minmax(5.4em, auto) minmax(4.9em, auto);
   align-content: center;
   align-items: center;
   justify-content: center;
   justify-items: center;
   gap: clamp(14px, 1.45vw, 20px);
-  min-height: clamp(205px, 17vw, 238px);
+  min-height: clamp(245px, 20vw, 282px);
   padding: clamp(24px, 2.5vw, 34px) clamp(16px, 1.8vw, 24px);
   border: 1px solid rgba(15, 23, 42, 0.09);
   border-top: 5px solid var(--hino-red);
@@ -1114,7 +1114,7 @@ blockquote {
   justify-content: center;
   justify-self: center;
   gap: 7px;
-  max-width: 20ch;
+  max-width: 22ch;
   min-height: 0;
   padding: 0 4px;
   text-align: center;
@@ -1127,6 +1127,16 @@ blockquote {
   font-weight: 800;
   line-height: 1.25;
   color: var(--ink);
+  text-wrap: balance;
+}
+
+.stat-disclaimer {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.68rem, 0.72vw, 0.78rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.35;
   text-wrap: balance;
 }
 
@@ -1373,7 +1383,7 @@ blockquote {
 }
 
 .timeline-marker-year {
-  font-size: clamp(1.2rem, 2vw, 1.85rem);
+  font-size: clamp(1.35rem, 2.2vw, 2.08rem);
   font-weight: 500;
   line-height: 1.15;
   letter-spacing: 0;
@@ -1474,7 +1484,7 @@ blockquote {
 .milestone-title {
   margin: 0;
   color: #596273;
-  font-size: clamp(0.88rem, 1vw, 1.04rem);
+  font-size: clamp(1rem, 1.14vw, 1.18rem);
   font-weight: 600;
   line-height: 1.32;
   text-wrap: balance;
@@ -1527,8 +1537,12 @@ blockquote {
 
 .milestone-event.is-current .milestone-card {
   opacity: 1;
-  transform: translateY(0) scale(1.08);
+  transform: translateY(0) scale(1.2);
   box-shadow: 0 28px 60px rgba(15, 23, 42, 0.24), 0 8px 20px rgba(201, 0, 0, 0.1);
+}
+
+.milestone-event.is-current .milestone-image {
+  filter: saturate(1.12) contrast(1.07);
 }
 
 .milestone-image {
@@ -1538,13 +1552,6 @@ blockquote {
   object-fit: cover;
   object-position: center;
   background: transparent;
-}
-
-.milestone-image-anniversary {
-  object-fit: contain;
-  padding: clamp(16px, 2vw, 24px);
-  background: #ffffff;
-  filter: none;
 }
 
 .milestone-year-1995 .milestone-image,
@@ -1568,11 +1575,6 @@ blockquote {
 .milestone-year-2021 .milestone-image,
 .milestone-year-2024 .milestone-image {
   object-position: center;
-}
-
-.milestone-event.is-anniversary .milestone-card {
-  border: 1px solid rgba(201, 0, 0, 0.15);
-  background: #ffffff;
 }
 
 .milestone-image-placeholder {
@@ -2236,7 +2238,7 @@ blockquote {
   }
 
   .milestone-event.is-current .milestone-card {
-    transform: translateY(0) scale(1.04);
+    transform: translateY(0) scale(1.15);
   }
 
   .footer-main {

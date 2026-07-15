@@ -17,6 +17,8 @@ export function setupTimeline(section) {
   const previousButton = section.querySelector("[data-timeline-prev]");
   const nextButton = section.querySelector("[data-timeline-next]");
   const progressFill = section.querySelector("[data-timeline-progress]");
+  const initialYear = section.dataset.initialYear;
+  const initialIndex = events.findIndex((event) => event.dataset.year === initialYear);
 
   if (!viewport || !track || !canvas || !events.length) {
     return () => {};
@@ -221,6 +223,9 @@ export function setupTimeline(section) {
   }
 
   build();
+  if (initialIndex >= 0) {
+    goToIndex(initialIndex, { immediate: true });
+  }
 
   if (!reduceMotion.matches) {
     autoplayId = window.setInterval(() => {
