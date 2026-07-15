@@ -233,7 +233,8 @@ test("timeline supports drag scrolling without active text reflow", () => {
   const styles = file("src/styles.css");
 
   assert.match(timeline, /addEventListener\("pointerdown", onPointerDown\)/);
-  assert.match(timeline, /viewport\.scrollLeft = dragStartScrollLeft - \(event\.clientX - dragStartX\)/);
+  assert.match(timeline, /shouldStartTimelineDrag\(deltaX\)/);
+  assert.match(timeline, /viewport\.scrollLeft = dragStartScrollLeft - deltaX/);
   assert.match(
     timeline,
     /calculateCenteredTarget\(\s*event\.offsetLeft,\s*event\.offsetWidth,\s*viewport\.clientWidth,\s*maxScroll\(\)\s*\)/s
@@ -247,6 +248,13 @@ test("timeline supports drag scrolling without active text reflow", () => {
   assert.doesNotMatch(timeline, /classList\.toggle\("is-active", reached\)/);
   assert.match(styles, /\.timeline-viewport\.is-dragging/);
   assert.match(styles, /\.timeline-viewport\.is-dragging \{[\s\S]*scroll-snap-type:\s*none/);
+  assert.match(timeline, /addEventListener\("keydown", onViewportKeyDown\)/);
+  assert.match(timeline, /resolveTimelineKey\(/);
+  assert.match(timeline, /TIMELINE_INTERACTION_RESUME_MS/);
+  assert.match(timeline, /classList\.add\("has-interacted"\)/);
+  assert.match(timeline, /classList\.toggle\("can-scroll-left"/);
+  assert.match(timeline, /classList\.toggle\("can-scroll-right"/);
+  assert.match(timeline, /goToIndex\(currentIndex\(\), \{ source: "drag" \}\)/);
 
   const currentYearBlock = styles.match(/\.timeline-marker\.is-current \.timeline-marker-year \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(currentYearBlock, /color:\s*var\(--hino-red\)/);
@@ -260,7 +268,12 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   const currentCardBlock = styles.match(/\.milestone-event\.is-current \.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(currentCardBlock, /box-shadow:/);
-  assert.match(currentCardBlock, /translateY\(0\) scale\(1\.2\)/);
+  assert.match(currentCardBlock, /translateY\(0\) scale\(var\(--milestone-active-scale\)\)/);
+  assert.match(styles, /\.timeline-section\s*\{[^}]*--milestone-active-scale:\s*1\.2/s);
+  assert.match(
+    styles,
+    /\.timeline-section\s*\{[^}]*--timeline-center-gutter:\s*calc\(\(100vw - var\(--timeline-item-width\)\) \/ 2\)/s
+  );
 
   const cardBlock = styles.match(/\.milestone-card \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(cardBlock, /margin:\s*18px auto 0/);
@@ -268,11 +281,12 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   assert.match(
     styles,
-    /@media \(max-width: 900px\) \{[\s\S]*?\.milestone-event\.is-current \.milestone-card\s*\{[^}]*transform:\s*translateY\(0\) scale\(1\.15\)/s
+    /@media \(max-width: 900px\) \{[\s\S]*?\.timeline-section\s*\{[^}]*--milestone-active-scale:\s*1\.15/s
   );
 
   const railBlock = styles.match(/\.timeline-rail \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(railBlock, /margin:\s*0 0 44px/);
+  assert.match(railBlock, /box-sizing:\s*border-box/);
 
   const trackBlock = styles.match(/\.timeline-track \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(trackBlock, /padding:\s*6px 0 0/);
@@ -283,6 +297,7 @@ test("timeline supports drag scrolling without active text reflow", () => {
 
   const canvasBlock = styles.match(/\.timeline-canvas \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(canvasBlock, /padding:\s*0 var\(--timeline-center-gutter\) 72px/);
+  assert.match(canvasBlock, /box-sizing:\s*border-box/);
 });
 
 
@@ -386,9 +401,9 @@ test("rendered news and milestones use real local images", async () => {
   const html = renderPage(content.vi, "vi");
 
   assert.match(html, /<figure class="card-media"><img class="card-image" src="src\/assets\/news-vilog-2025\.jpg" alt="Recap sự kiện kỷ niệm 30 năm Hino Motors Việt Nam" loading="lazy"><\/figure>/);
-  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-1995\.jpg" alt="1995 milestone image" loading="lazy">/);
-  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-2025\.jpg" alt="2025 milestone image" loading="lazy">/);
-  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-2026-new-office\.jpg" alt="Hanoi new office grand opening ceremony" loading="lazy">/);
+  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-1995\.jpg" alt="1995 milestone image" loading="lazy" draggable="false">/);
+  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-2025\.jpg" alt="2025 milestone image" loading="lazy" draggable="false">/);
+  assert.match(html, /<img class="milestone-image" src="src\/assets\/milestone-2026-new-office\.jpg" alt="Hanoi new office grand opening ceremony" loading="lazy" draggable="false">/);
 });
 
 test("rendered milestones expose unpinned horizontal timeline", async () => {
@@ -401,7 +416,7 @@ test("rendered milestones expose unpinned horizontal timeline", async () => {
 
   assert.match(html, /class="timeline-header"/);
   assert.doesNotMatch(html, /timeline-intro-mark/);
-  assert.match(html, /class="timeline-viewport" tabindex="0"/);
+  assert.match(html, /class="timeline-viewport"\s+tabindex="0"/);
   assert.match(html, /class="timeline-rail"/);
   assert.match(html, /data-timeline-marker data-year="1995"/);
   assert.match(html, /class="timeline-dot"/);
@@ -410,6 +425,50 @@ test("rendered milestones expose unpinned horizontal timeline", async () => {
   assert.doesNotMatch(html, /data-timeline-prev/);
   assert.doesNotMatch(html, /data-timeline-next/);
   assert.match(html, /class="timeline-progress"/);
+});
+
+test("rendered milestones explain gesture navigation and keep progress passive", async () => {
+  const [{ content }, { renderPage }] = await Promise.all([
+    import("../src/content.js"),
+    import("../src/render.js")
+  ]);
+
+  const vi = renderPage(content.vi, "vi");
+  const en = renderPage(content.en, "en");
+
+  assert.match(vi, /aria-describedby="timeline-gesture-hint"/);
+  assert.match(
+    vi,
+    /id="timeline-gesture-hint" class="timeline-gesture-hint"[\s\S]*Kéo hoặc vuốt để khám phá/
+  );
+  assert.match(en, /Drag or swipe to explore/);
+  assert.match(vi, /class="milestone-image"[^>]*draggable="false"/);
+  assert.match(vi, /class="timeline-progress"/);
+  assert.doesNotMatch(vi, /timeline-progress[^>]*(button|slider|tabindex)/);
+  assert.doesNotMatch(vi, /data-timeline-prev|data-timeline-next/);
+});
+
+test("timeline motion stays gesture-first, subtle, and reduced-motion safe", () => {
+  const css = file("src/styles.css");
+  const js = file("src/timeline.js");
+
+  assert.match(css, /\.timeline-gesture-hint\s*\{/);
+  assert.match(css, /\.timeline-pin::before/);
+  assert.match(css, /\.timeline-pin::after/);
+  assert.match(css, /\.can-scroll-left/);
+  assert.match(css, /\.can-scroll-right/);
+  assert.match(css, /@keyframes milestoneEnter/);
+  assert.match(css, /@keyframes timelineDotPulse/);
+  assert.match(css, /@keyframes timelineProgressGlint/);
+  assert.match(css, /filter:\s*saturate\(0\.72\)/);
+  assert.match(js, /timelineDirection/);
+  assert.match(js, /is-entering/);
+  assert.match(js, /is-advancing/);
+  assert.doesNotMatch(css, /spotlight|cursor-follow|perspective\(/i);
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.timeline-progress-fill::after[\s\S]*display:\s*none/s
+  );
 });
 
 test("rendered milestones use coded reference-style timeline structure", async () => {
@@ -579,27 +638,18 @@ test("css avoids responsive overflow and focus clipping regressions", () => {
   );
 });
 
-test("timeline uses native horizontal scrolling and respects reduced motion", () => {
+test("timeline uses controlled autoplay and scoped interaction listeners", () => {
   const js = file("src/timeline.js");
-  const css = file("src/styles.css");
-  assert.match(js, /setupTimeline/);
-  assert.match(js, /scrollToProgress/);
-  assert.match(js, /goToIndex/);
-  assert.match(js, /viewport\.scrollTo/);
-  assert.match(js, /viewport\.scrollLeft/);
-  assert.doesNotMatch(js, /ScrollTrigger/);
-  assert.doesNotMatch(js, /pin:\s*true/);
-  assert.doesNotMatch(js, /scrub/);
-  assert.match(js, /is-active/);
-  assert.match(js, /is-current/);
-  assert.match(js, /aria-current/);
-  assert.match(js, /setInterval/);
-  assert.match(js, /data-timeline-next/);
-  assert.match(js, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /\.timeline-viewport\s*\{[^}]*overflow-x:\s*auto/s);
-  assert.match(css, /\.milestone-event\.is-active/);
-  assert.match(css, /\.timeline-header/);
-  assert.match(css, /\.timeline-progress\s*\{/);
+
+  assert.match(js, /createTimelineAutoplayScheduler/);
+  assert.match(js, /TIMELINE_AUTOPLAY_DWELL_MS/);
+  assert.match(js, /TIMELINE_INTERACTION_RESUME_MS/);
+  assert.match(js, /IntersectionObserver/);
+  assert.match(js, /visibilitychange/);
+  assert.match(js, /viewport\.addEventListener\("wheel"/);
+  assert.doesNotMatch(js, /window\.setInterval|setInterval\(/);
+  assert.doesNotMatch(js, /window\.addEventListener\("wheel"/);
+  assert.doesNotMatch(js, /data-timeline-prev|data-timeline-next/);
 });
 
 test("smooth scrolling uses Lenis and stays synchronized with ScrollTrigger", () => {
