@@ -54,6 +54,10 @@ export function getTimelineEdgeState(scrollLeft, maximumScroll, tolerance = 2) {
   };
 }
 
+export function shouldStartTimelineDrag(deltaX, tolerance = 6) {
+  return Math.abs(deltaX) > tolerance;
+}
+
 export function calculateCenteredTarget(eventOffsetLeft, eventWidth, viewportWidth, maximumScroll) {
   const upperBound = Math.max(0, maximumScroll);
   const centeredTarget = eventOffsetLeft + eventWidth / 2 - viewportWidth / 2;
@@ -87,6 +91,7 @@ export function setupTimeline(section) {
   let navigationToken = 0;
   let scrollAnimation = null;
   let motionTimerId = null;
+  let dragHasMoved = false;
   let dragStartX = 0;
   let dragStartScrollLeft = 0;
 
@@ -363,18 +368,26 @@ export function setupTimeline(section) {
     autoplay.cancel();
     cancelScrollAnimation();
     isDragging = true;
+    dragHasMoved = false;
     dragStartX = event.clientX;
     dragStartScrollLeft = viewport.scrollLeft;
-    viewport.classList.add("is-dragging");
-    viewport.setPointerCapture?.(event.pointerId);
   }
 
   function onPointerMove(event) {
     if (!isDragging) {
       return;
     }
+    const deltaX = event.clientX - dragStartX;
+    if (!dragHasMoved) {
+      if (!shouldStartTimelineDrag(deltaX)) {
+        return;
+      }
+      dragHasMoved = true;
+      viewport.classList.add("is-dragging");
+      viewport.setPointerCapture?.(event.pointerId);
+    }
     event.preventDefault();
-    viewport.scrollLeft = dragStartScrollLeft - (event.clientX - dragStartX);
+    viewport.scrollLeft = dragStartScrollLeft - deltaX;
     applyProgress(currentScrollProgress(), ratios);
     updateEdgeState();
   }
@@ -383,15 +396,18 @@ export function setupTimeline(section) {
     if (!isDragging) {
       return;
     }
+    const moved = dragHasMoved;
     isDragging = false;
+    dragHasMoved = false;
     viewport.classList.remove("is-dragging");
     if (viewport.hasPointerCapture?.(event.pointerId)) {
       viewport.releasePointerCapture(event.pointerId);
     }
-    const moved = Math.abs(viewport.scrollLeft - dragStartScrollLeft) > 6;
-    if (moved) {
-      dismissGestureHint();
+    if (!moved) {
+      resumeAfterInteraction();
+      return;
     }
+    dismissGestureHint();
     await goToIndex(currentIndex(), { source: "drag" });
     resumeAfterInteraction();
   }

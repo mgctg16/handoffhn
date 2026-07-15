@@ -6,7 +6,8 @@ import {
   calculateCenteredTarget,
   createTimelineAutoplayScheduler,
   getTimelineEdgeState,
-  resolveTimelineKey
+  resolveTimelineKey,
+  shouldStartTimelineDrag
 } from "../src/timeline.js";
 
 test("calculateCenteredTarget centers milestones and clamps both edges", () => {
@@ -84,4 +85,12 @@ test("getTimelineEdgeState reports available directions", () => {
     canScrollLeft: false,
     canScrollRight: false
   });
+});
+
+test("shouldStartTimelineDrag preserves clicks until movement clears the threshold", () => {
+  assert.equal(shouldStartTimelineDrag(0), false);
+  assert.equal(shouldStartTimelineDrag(6), false);
+  assert.equal(shouldStartTimelineDrag(-6), false);
+  assert.equal(shouldStartTimelineDrag(7), true);
+  assert.equal(shouldStartTimelineDrag(-12), true);
 });

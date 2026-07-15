@@ -393,7 +393,7 @@ function renderMilestones(section, activeLang) {
         ? `<ul class="milestone-title milestone-list">${eventParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("")}</ul>`
         : `<h3 class="milestone-title">${escapeHtml(eventParts[0] || item.text)}</h3>`;
       const image = hasImage
-        ? `<img class="milestone-image" src="${safeUrl(item.imageUrl, "", { allowHash: false })}" alt="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}" loading="lazy">`
+        ? `<img class="milestone-image" src="${safeUrl(item.imageUrl, "", { allowHash: false })}" alt="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}" loading="lazy" draggable="false">`
         : `<div class="milestone-image milestone-image-placeholder" role="img" aria-label="${escapeHtml(item.imageAlt || `${item.year} milestone image`)}"></div>`;
 
       return `
